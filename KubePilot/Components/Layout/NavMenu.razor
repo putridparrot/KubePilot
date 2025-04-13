@@ -1,0 +1,83 @@
+@inject IKubernetesClientService KubernetesClientService
+ 
+<div style="height: 100vh; overflow-y: auto; width:400px">
+    <FluentNavMenu Width="400" Collapsible="false" Title="Navigation Menu" Margin="10px">
+        <FluentNavLink Href="/" Match="NavLinkMatch.All" Class="bold-nav-link">Clusters</FluentNavLink>
+
+        @if (_clusters != null)
+        {
+            <FluentNavLink Href="/apiresources" Class="normal-nav-link">API Resources</FluentNavLink>
+            <FluentNavLink Href="/apiservices" Class="normal-nav-link">API Services</FluentNavLink>
+            <FluentNavLink Href="/certificatesigningrequests" Class="normal-nav-link">Certificate Signing Requests</FluentNavLink>
+            <FluentNavLink Href="/clusterrolebindings" Class="normal-nav-link">Cluster Role Bindings</FluentNavLink>
+            <FluentNavLink Href="/clusterroles" Class="normal-nav-link">Cluster Roles</FluentNavLink>
+            <FluentNavLink Href="/componentstatuses" Class="normal-nav-link">Component Statuses</FluentNavLink>
+            <FluentNavLink Href="/configmaps" Class="normal-nav-link">Config Maps</FluentNavLink>
+            <FluentNavLink Href="/controllerrevisions" Class="normal-nav-link">Controller Revisions</FluentNavLink>
+            <FluentNavLink Href="/cronjobs" Class="normal-nav-link">Cron Jobs</FluentNavLink>
+            <FluentNavLink Href="/csidrivers" Class="normal-nav-link">CSI Drivers</FluentNavLink>
+            <FluentNavLink Href="/csinodes" Class="normal-nav-link">CSI Nodes</FluentNavLink>
+            <FluentNavLink Href="/csistoragecapacity" Class="normal-nav-link">CSI Storage Capacity</FluentNavLink>
+            <FluentNavLink Href="/customresourcedefinitions" Class="normal-nav-link">Custom Resource Definitions</FluentNavLink>
+            <FluentNavLink Href="/daemonsets" Class="normal-nav-link">Daemon Sets</FluentNavLink>
+            <FluentNavLink Href="/deployments" Class="normal-nav-link">Deployments</FluentNavLink>
+            <FluentNavLink Href="/deviceclasses" Class="normal-nav-link">Device Classes</FluentNavLink>
+            <FluentNavLink Href="/endpointslices" Class="normal-nav-link">Endpoint Slices</FluentNavLink>
+            <FluentNavLink Href="/endpoints" Class="normal-nav-link">Endpoints</FluentNavLink>
+            <FluentNavLink Href="/events" Class="normal-nav-link">Events</FluentNavLink>
+            <FluentNavLink Href="/flowschemas" Class="normal-nav-link">Flow Schemas</FluentNavLink>
+            <FluentNavLink Href="/horizontalpodautoscalers" Class="normal-nav-link">Horizontal Pod Autoscalers</FluentNavLink>
+            <FluentNavLink Href="/ingressclasses" Class="normal-nav-link">Ingress Classes</FluentNavLink>
+            <FluentNavLink Href="/ingresses" Class="normal-nav-link">Ingresses</FluentNavLink>
+            <FluentNavLink Href="/ipaddresses" Class="normal-nav-link">IP Addresses</FluentNavLink>
+            <FluentNavLink Href="/jobs" Class="normal-nav-link">Jobs</FluentNavLink>
+            <FluentNavLink Href="/leasecandidates" Class="normal-nav-link">Lease Candidates</FluentNavLink>
+            <FluentNavLink Href="/leases" Class="normal-nav-link">Leases</FluentNavLink>
+            <FluentNavLink Href="/limitranges" Class="normal-nav-link">Limit Ranges</FluentNavLink>
+            <FluentNavLink Href="/mutatingadmissionpolicies" Class="normal-nav-link">Mutating Admission Policies</FluentNavLink>
+            <FluentNavLink Href="/mutatingadmissionpolicybindings" Class="normal-nav-link">Mutating Admission Policy Bindings</FluentNavLink>
+            <FluentNavLink Href="/mutatingwebhookconfigurations" Class="normal-nav-link">Mutating Webhook Configurations</FluentNavLink>
+            <FluentNavLink Href="/namespaces" Class="normal-nav-link">Namespaces</FluentNavLink>
+            <FluentNavLink Href="/networkpolicies" Class="normal-nav-link">Network Policies</FluentNavLink>
+            <FluentNavLink Href="/nodes" Class="normal-nav-link">Nodes</FluentNavLink>
+            <FluentNavLink Href="/persistentvolumeclaims" Class="normal-nav-link">Persistent Volume Claims</FluentNavLink>
+            <FluentNavLink Href="/persistentvolumes" Class="normal-nav-link">Persistent Volumes</FluentNavLink>
+            <FluentNavLink Href="/poddisruptionbudgets" Class="normal-nav-link">Pod Disruption Budgets</FluentNavLink>
+            <FluentNavLink Href="/podtemplates" Class="normal-nav-link">Pod Templates</FluentNavLink>
+            <FluentNavLink Href="/pods" Class="normal-nav-link">Pods</FluentNavLink>
+            <FluentNavLink Href="/priorityclasses" Class="normal-nav-link">Priority Classes</FluentNavLink>
+            <FluentNavLink Href="/prioritylevelconfigurations" Class="normal-nav-link">Priority Level Configurations</FluentNavLink>
+            <FluentNavLink Href="/replicasets" Class="normal-nav-link">Replica Sets</FluentNavLink>
+            <FluentNavLink Href="/replicationcontrollers" Class="normal-nav-link">Replication Controllers</FluentNavLink>
+            <FluentNavLink Href="/resourceclaimtemplates" Class="normal-nav-link">Resource Claim Templates</FluentNavLink>
+            <FluentNavLink Href="/resourceclaims" Class="normal-nav-link">Resource Claims</FluentNavLink>
+            <FluentNavLink Href="/resourcequotas" Class="normal-nav-link">Resource Quotas</FluentNavLink>
+            <FluentNavLink Href="/resourceslices" Class="normal-nav-link">Resource Slices</FluentNavLink>
+            <FluentNavLink Href="/rolebindings" Class="normal-nav-link">Role Bindings</FluentNavLink>
+            <FluentNavLink Href="/roles" Class="normal-nav-link">Roles</FluentNavLink>
+            <FluentNavLink Href="/runtimeclasses" Class="normal-nav-link">Runtime Classes</FluentNavLink>
+            <FluentNavLink Href="/secrets" Class="normal-nav-link">Secrets</FluentNavLink>
+            <FluentNavLink Href="/serviceaccounts" Class="normal-nav-link">Service Accounts</FluentNavLink>
+            <FluentNavLink Href="/servicecidrs" Class="normal-nav-link">Service CIDRS</FluentNavLink>
+            <FluentNavLink Href="/services" Class="normal-nav-link">Services</FluentNavLink>
+            <FluentNavLink Href="/statefulsets" Class="normal-nav-link">Stateful Sets</FluentNavLink>
+            <FluentNavLink Href="/storageclasses" Class="normal-nav-link">Storage Classes</FluentNavLink>
+            <FluentNavLink Href="/storageversionmigrations" Class="normal-nav-link">Storage Version Migrations</FluentNavLink>
+            <FluentNavLink Href="/storageversions" Class="normal-nav-link">Storage Versions</FluentNavLink>
+            <FluentNavLink Href="/validatingadmissionpolicies" Class="normal-nav-link">Validating Admission Policies</FluentNavLink>
+            <FluentNavLink Href="/validatingadmissionpolicybindings" Class="normal-nav-link">Validating Admission Policy Bindings</FluentNavLink>
+            <FluentNavLink Href="/validatingwebhookconfigurations" Class="normal-nav-link">Validating Webhook Configurations</FluentNavLink>
+            <FluentNavLink Href="/volumeattachments" Class="normal-nav-link">Volume Attachments</FluentNavLink>
+            <FluentNavLink Href="/volumeattributes" Class="normal-nav-link">Volume Attributes</FluentNavLink>
+        }
+    </FluentNavMenu>
+</div>
+
+@code {
+    private List<Cluster>? _clusters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _clusters = await KubernetesClientService.GetClustersAsync();
+    }
+}

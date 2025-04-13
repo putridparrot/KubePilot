@@ -1,0 +1,59 @@
+@page "/events"
+@inject IKubernetesClientService KubernetesClientService;
+
+<ListPage Title="Events" IsLoading="@_loading" KubectlHint="kubectl get events --all-namespaces" Selected="@_selected">
+    <FluentDataGrid TGridItem="Selectable<Corev1Event>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <EmptyContent>
+            <div>@(_failure ?? "No data to show")</div>
+        </EmptyContent>
+        <ChildContent>
+            <SelectColumn TGridItem="Selectable<Corev1Event>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+            <PropertyColumn Title="Type" Property="@(p => p.Item.Type)" Sortable="true" />
+            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Message" Property="@(p => p.Item.Message)" Sortable="true" />
+            <PropertyColumn Title="Object Name" Property="@(p => p.Item.InvolvedObject.Name)" Sortable="true" />
+            <PropertyColumn Title="Last Timestamp" Property="@(p => p.Item.LastTimestamp)" Sortable="true" />
+        </ChildContent>
+    </FluentDataGrid>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<Corev1Event>>? _list;
+    private Corev1Event? _selected;
+    private string? _failure;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetEventsAsync();
+            switch (items)
+            {
+                case ISuccess success:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<Corev1Event> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+}

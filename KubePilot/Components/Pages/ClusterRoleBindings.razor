@@ -1,0 +1,60 @@
+@page "/clusterrolebindings"
+@inject IKubernetesClientService KubernetesClientService;
+
+<ListPage Title="Cluster Role Bindings" IsLoading="@_loading" KubectlHint="kubectl get clusterrolebindings" Selected="@_selected">
+    <FluentDataGrid TGridItem="Selectable<V1ClusterRoleBinding>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <EmptyContent>
+            <div>@(_failure ?? "No data to show")</div>
+        </EmptyContent>
+        <ChildContent>
+            <SelectColumn TGridItem="Selectable<V1ClusterRoleBinding>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Role" Property="@(p => $"{p.Item.RoleRef.Kind}/{p.Item.RoleRef.Name}")" Sortable="true" />
+            <PropertyColumn Title="Users" Property="@(p => GetUsers(p))" Sortable="true" />
+            <PropertyColumn Title="Groups" Property="@(p => GetGroups(p))" Sortable="true" />
+        </ChildContent>
+    </FluentDataGrid>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<V1ClusterRoleBinding>>? _list;
+    private V1ClusterRoleBinding? _selected;
+    private string? _failure;
+
+    private static string? GetGroups(Selectable<V1ClusterRoleBinding> item) => item.Item.Subjects?.Where(s => s.Kind == "Group").Select(g => g.Name).CsvJoin();
+    private static string? GetUsers(Selectable<V1ClusterRoleBinding> item) => item.Item.Subjects?.Where(s => s.Kind == "User").Select(g => g.Name).CsvJoin();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetClusterRoleBindingsAsync();
+            switch (items)
+            {
+                case ISuccess success:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<V1ClusterRoleBinding> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+}

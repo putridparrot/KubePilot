@@ -1,0 +1,61 @@
+@page "/daemonsets"
+@inject IKubernetesClientService KubernetesClientService;
+
+<ListPage Title="Daemon Sets" IsLoading="@_loading" KubectlHint="kubectl get ds --all-namespaces" Selected="@_selected">
+    <FluentDataGrid TGridItem="Selectable<V1DaemonSet>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <EmptyContent>
+            <div>@(_failure ?? "No data to show")</div>
+        </EmptyContent>
+        <ChildContent>
+            <SelectColumn TGridItem="Selectable<V1DaemonSet>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+            <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
+            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Desired" Property="@(p => p.Item.Status.DesiredNumberScheduled)" Sortable="true" />
+            <PropertyColumn Title="Current" Property="@(p => p.Item.Status.CurrentNumberScheduled)" Sortable="true" />
+            <PropertyColumn Title="Ready" Property="@(p => p.Item.Status.NumberReady)" Sortable="true" />
+            <PropertyColumn Title="Upto date" Property="@(p => p.Item.Status.UpdatedNumberScheduled)" Sortable="true" />
+            <PropertyColumn Title="Available" Property="@(p => p.Item.Status.NumberAvailable)" Sortable="true" />
+        </ChildContent>
+    </FluentDataGrid>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<V1DaemonSet>>? _list;
+    private V1DaemonSet? _selected;
+    private string? _failure;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetDaemonSetsAsync();
+            switch (items)
+            {
+                case ISuccess success:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<V1DaemonSet> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+}

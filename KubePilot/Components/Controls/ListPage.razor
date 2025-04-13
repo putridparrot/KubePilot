@@ -1,0 +1,123 @@
+﻿@using KubePilot.Utils
+@inject IDialogService DialogService
+@inject IClipboardService ClipboardService
+@inject IKubernetesClientService KubernetesClientService
+
+<h3>@Title</h3>
+
+<div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+    <span>
+    @Actions
+    </span>
+
+    @if (!String.IsNullOrEmpty(KubectlHint))
+    {
+        <FluentButton Id="CopyButton" OnClick="@(async () => await ClipboardService.ToClipboardAsync(KubectlHint))">
+            <FluentIcon Icon="Icons.Regular.Size16.Copy"></FluentIcon>
+        </FluentButton>
+        <FluentTooltip Anchor="CopyButton">Copy to Clipboard</FluentTooltip>
+
+        <span style="text-align: center;">@KubectlHint</span>
+
+        @*         @if (!String.IsNullOrEmpty(Description))
+        {
+                    <FluentButton Id="description" OnClick="@(e => _descriptionVisible = !_descriptionVisible)">
+                        <FluentIcon Icon="Icons.Regular.Size16.Info"></FluentIcon>
+                    </FluentButton>
+                    <FluentTooltip Anchor="description"
+                                   Position="TooltipPosition.End"
+                                   Delay="200"
+                                   Style="width: 200px"
+                                   UseTooltipService="false"
+                                   Visible="@_descriptionVisible">@Description</FluentTooltip>
+        } *@
+    }
+
+    <FluentButton Id="ViewYaml" OnClick="@ShowYamlAsync" Disabled="@(Selected is null)">
+        <FluentIcon Icon="Icons.Regular.Size16.DocumentYml"></FluentIcon>
+    </FluentButton>
+    <FluentTooltip Anchor="ViewYaml">View as YAML</FluentTooltip>
+
+    @if (Selected is V1Pod)
+    {
+        <FluentButton Id="ViewLog" OnClick="@LogAsync">
+            <FluentIcon Icon="Icons.Regular.Size16.List"></FluentIcon>
+        </FluentButton>
+        <FluentTooltip Anchor="ViewLog">View Log</FluentTooltip>
+    }
+
+
+</div>
+
+<Loading IsLoading="@IsLoading">
+    @ChildContent
+</Loading>
+
+@code {
+
+    private bool _descriptionVisible;
+
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? KubectlHint { get; set; }
+    [Parameter] public bool IsLoading { get; set; } = true;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public object? Selected { get; set; }
+    [Parameter] public bool IsCluster { get; set; } = false;
+    [Parameter] public RenderFragment? Actions { get; set; }
+
+    private async Task OpenDialogAsync()
+    {
+        var dialog = await DialogService.ShowDialogAsync<ConfigurationDialog>(new ConfigurationViewModel(), new DialogParameters());
+        var result = await dialog.Result;
+    }
+
+    private async Task ShowYamlAsync()
+    {
+        if (Selected != null)
+        {
+            var yaml = Converter.ToYaml(Selected);
+
+            var dialog = await DialogService.ShowDialogAsync<YamlViewerDialog>(yaml, new DialogParameters
+                {
+                    Title = "YAML",
+                    Width = "100vh",
+                    Height = "90vh",
+                    PrimaryAction = "Copy",
+                    SecondaryAction = "Close"
+                });
+
+            var result = await dialog.Result;
+            if (result.Data is not null && !result.Cancelled)
+            {
+                await ClipboardService.ToClipboardAsync(yaml);
+            }
+        }
+    }
+
+    private async Task LogAsync()
+    {
+        // this is a sample
+        var selected = Selected as V1Pod;
+        if (selected != null)
+        {
+            var log = await KubernetesClientService.GetPodLogsAsync(selected.Metadata.NamespaceProperty, selected.Metadata.Name);
+
+            var dialog = await DialogService.ShowDialogAsync<YamlViewerDialog>(log, new DialogParameters
+                {
+                    Title = "Log",
+                    Width = "100vh",
+                    Height = "90vh",
+                    PrimaryAction = "Copy",
+                    SecondaryAction = ""
+                });
+
+            var result = await dialog.Result;
+            if (result.Data is not null && !result.Cancelled)
+            {
+                await ClipboardService.ToClipboardAsync(log);
+            }
+
+        }
+    }
+}

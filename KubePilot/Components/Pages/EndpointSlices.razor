@@ -1,0 +1,60 @@
+@page "/endpointslices"
+@inject IKubernetesClientService KubernetesClientService;
+
+<ListPage Title="Endpoint Slices" IsLoading="@_loading" KubectlHint="kubectl get endpointslices --all-namespaces" Selected="@_selected">
+    <FluentDataGrid TGridItem="Selectable<V1EndpointSlice>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <EmptyContent>
+            <div>@(_failure ?? "No data to show")</div>
+        </EmptyContent>
+        <ChildContent>
+            <SelectColumn TGridItem="Selectable<V1EndpointSlice>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+            <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
+            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Address Type" Property="@(p => p.Item.AddressType)" Sortable="true" />
+            <PropertyColumn Title="Endpoints" Property="@(p => p.Item.Endpoints.SelectMany(e => e.Addresses).CsvJoin())" Sortable="true" />
+            <PropertyColumn Title="Ports" Property="@(p => p.Item.Ports.Select(i => i.Port).CsvJoin())" Sortable="true" />
+            <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
+        </ChildContent>
+    </FluentDataGrid>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<V1EndpointSlice>>? _list;
+    private V1EndpointSlice? _selected;
+    private string? _failure;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetEndpointSlicesAsync();
+            switch (items)
+            {
+                case ISuccess success:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<V1EndpointSlice> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+}

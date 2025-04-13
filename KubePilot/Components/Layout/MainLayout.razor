@@ -1,0 +1,32 @@
+﻿@inherits LayoutComponentBase
+
+<FluentLayout>
+    <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
+        <NavMenu />
+        <FluentBodyContent Style="height: 100vh">
+            <ErrorBoundary @ref="errorBoundary">
+                <ChildContent>
+                    <div class="content">
+                        @Body
+                    </div>
+                </ChildContent>
+                <ErrorContent Context="ex">
+                    <div class="blazor-error-boundary">
+@*                         <FluentButton OnClick="@(_ => errorBoundary?.Recover())">
+                            <FluentIcon Icon="Icons.Regular.Size16.AlertOff"></FluentIcon>
+                        </FluentButton>
+ *@                        @ex.Message
+                    </div>
+                </ErrorContent>
+            </ErrorBoundary>
+        </FluentBodyContent>
+    </FluentStack>
+</FluentLayout>
+
+<FluentDialogProvider />
+<FluentMenuProvider />
+<FluentTooltipProvider />
+
+@code {
+    private ErrorBoundary? errorBoundary;
+}

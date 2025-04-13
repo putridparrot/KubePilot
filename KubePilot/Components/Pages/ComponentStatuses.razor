@@ -1,0 +1,58 @@
+@page "/componentstatuses"
+@inject IKubernetesClientService KubernetesClientService;
+
+<ListPage Title="Component Statuses" IsLoading="@_loading" KubectlHint="kubectl get componentstatuses" Selected="@_selected">
+    <FluentDataGrid TGridItem="Selectable<V1ComponentStatus>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <EmptyContent>
+            <div>@(_failure ?? "No data to show")</div>
+        </EmptyContent>
+        <ChildContent>
+            <SelectColumn TGridItem="Selectable<V1ComponentStatus>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Status" Property="@(p => p.Item.Conditions[0].Status)" Sortable="true" />
+            <PropertyColumn Title="Status" Property="@(p => p.Item.Conditions[0].Message)" Sortable="true" />
+            <PropertyColumn Title="Error" Property="@(p => p.Item.Conditions[0].Error)" Sortable="true" />
+        </ChildContent>
+    </FluentDataGrid>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<V1ComponentStatus>>? _list;
+    private V1ComponentStatus? _selected;
+    private string? _failure;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetComponentStatusesAsync();
+            switch (items)
+            {
+                case ISuccess success:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<V1ComponentStatus> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+}

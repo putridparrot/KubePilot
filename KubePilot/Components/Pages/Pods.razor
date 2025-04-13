@@ -1,0 +1,108 @@
+@page "/pods"
+@using KubePilot.Utils
+@inject IKubernetesClientService KubernetesClientService;
+@inject IDialogService DialogService
+@inject IClipboardService ClipboardService
+
+<ListPage Title="Pods" IsLoading="@_loading" KubectlHint="kubectl get pods --all-namespaces" Selected="@_selected">
+    <Actions>
+        <FluentButton Id="Describe" OnClick="@DescribeAsync" Disabled="@(_selected is null)">
+            <FluentIcon Icon="Icons.Regular.Size16.Info"></FluentIcon>
+        </FluentButton>
+        <FluentTooltip Anchor="Describe">Describe</FluentTooltip>
+    </Actions>
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1Pod>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1Pod>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+                <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Status" Property="@(p => p.Item.Status.Phase)" Sortable="true" />
+                <PropertyColumn Title="Restarts" Property="@(p => $"{GetRestarts(p)} ({GetLastRestart(p)})")" Sortable="true" />
+                <PropertyColumn Title="Pod IP" Property="@(p => p.Item.Status.PodIP)" Sortable="true" />
+                <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<V1Pod>>? _list;
+    private V1Pod? _selected;
+    private string? _failure;
+
+    private static string? GetRestarts(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.RestartCount.ToString() ?? string.Empty;
+    private static string? GetLastRestart(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.State.Running.StartedAt.ToAge() ?? string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetPodsAsync();
+            switch (items)
+            {
+                case ISuccess:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<V1Pod> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+
+    private async Task DescribeAsync()
+    {
+        if (_selected is null)
+            return;
+
+        var result = await KubernetesClientService.DescribePodAsync(_selected.Name(), _selected.Namespace());
+        switch (result)
+        {
+            case ISuccess success:
+                var yaml = Converter.ToYaml(result);
+
+                var dialog = await DialogService.ShowDialogAsync<YamlViewerDialog>(yaml, new DialogParameters
+                {
+                    Title = "YAML",
+                    Width = "100vh",
+                    Height = "90vh",
+                    PrimaryAction = "Copy",
+                    SecondaryAction = "Close"
+                });
+
+                var dlgResult = await dialog.Result;
+                if (dlgResult.Data is not null && !dlgResult.Cancelled)
+                {
+                    await ClipboardService.ToClipboardAsync(yaml);
+                }
+
+                _failure = null;
+                break;
+            case IFailure failure:
+                _failure = failure.FailureMessage();
+                break;
+        }
+    }
+}

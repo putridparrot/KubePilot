@@ -1,0 +1,153 @@
+﻿@page "/"
+@inject IKubernetesClientService KubernetesClientService;
+
+@if (!_isUpdatingNamespaces)
+{
+    <ListPage Title="Clusters" IsLoading="@_loading" Selected="@_selected" IsCluster="true">
+        <Actions>
+            <FluentButton Id="UseCluster" OnClick="@UseClusterAsync" Disabled="@(_selected is null)">
+                <FluentIcon Icon="Icons.Regular.Size16.SelectAllOn"></FluentIcon>
+            </FluentButton>
+            <FluentTooltip Anchor="UseCluster">Use selected Cluster</FluentTooltip>
+       </Actions>
+
+        <ChildContent>
+             <FluentDataGrid TGridItem="Selectable<ClusterViewModel>" Items="@_list" RowClass="@RowClass">
+                <SelectColumn TGridItem="Selectable<ClusterViewModel>"
+                              SelectMode="DataGridSelectMode.SingleSticky"
+                              SelectFromEntireRow="true"
+                              Property="@(p => p.Selected)"
+                              OnSelect="@(async p =>
+                                        {
+                                            p.Item.Selected = p.Selected;
+                                            _selected = p.Item.Selected ? p.Item.Item : null;
+                                            await GetNamespacesForSelected(p.Item);
+                                        })"/>
+
+                <PropertyColumn Property="@(p => p.Item.Cluster.Name)" Sortable="true"/>
+                <PropertyColumn Property="@(p => p.Item.Cluster.ClusterEndpoint.Server)" Sortable="true"/>
+                @*                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Context.ContextDetails.Namespace)" Sortable="true"/>
+ *@
+                <TemplateColumn Title="Namespace" Sortable="true" Style="overflow: visible">
+                    @if (context.Selected)
+                    {
+                        <FluentSelect @bind-Value="@context.Item.Context.ContextDetails.Namespace" Items="@context.Item.Namespaces"/>
+                    }
+                    else
+                    {
+                        <div style="margin-left: 10px">@context.Item.Context.ContextDetails.Namespace</div>
+                    }
+                </TemplateColumn>
+            </FluentDataGrid>
+        </ChildContent>
+    </ListPage>
+}
+<style>
+    .highlight-row {
+    font-weight: bold;
+    }
+
+    .normal-row {
+    font-weight: normal;
+    }
+</style>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<ClusterViewModel>>? _list;
+    private ClusterViewModel? _selected;
+    private bool _isUpdatingNamespaces = false;
+
+    private string? RowClass(Selectable<ClusterViewModel> item)
+    {
+        var current = KubernetesClientService.GetCurrentContext();
+        return item.Item.Cluster.Name == current ? "highlight-row" : null;
+    }
+
+    private async Task GetNamespacesForSelected(Selectable<ClusterViewModel> selectable)
+    {
+        _isUpdatingNamespaces = true;
+        try
+        {
+            var namespaces = await KubernetesClientService.GetNamespacesAsync();
+            if (namespaces.IsSuccess())
+            {
+                var ns = namespaces.Value.Items.Select(s => s.Metadata.Name).ToList();
+                if (!string.IsNullOrEmpty(selectable.Item.Context.ContextDetails.Namespace) && !ns.Contains(selectable.Item.Context.ContextDetails.Namespace))
+                {
+                    ns.Add(selectable.Item.Context.ContextDetails.Namespace);
+                }
+
+                selectable.Item.Namespaces = ns.OrderBy(s => s).ToList();
+            }
+            else
+            {
+                selectable.Item.Namespaces = null;
+            }
+        }
+        finally
+        {
+            _isUpdatingNamespaces = false;
+        }
+    }
+
+    private async Task UseClusterAsync()
+    {
+        if (_selected != null)
+        {
+            try
+            {
+                KubernetesClientService.LoadConfig(null, _selected.Context.Name, _selected.Context.ContextDetails.Namespace);
+
+                var current = KubernetesClientService.GetCurrentContext();
+                var currentSelected = _list.FirstOrDefault(c => c.Item.Cluster.Name == current);
+                if (currentSelected != null)
+                {
+                    foreach(var item in _list)
+                    {
+                        item.Selected = false;
+                    }
+
+                    currentSelected.Selected = true;
+                }
+            }
+            catch (Exception e)
+            {
+                                
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var configuration = KubernetesClientService.GetClustersConfiguration();
+            var clusters = configuration.Clusters.ToArray();
+            var contexts = configuration.Contexts.ToArray();
+            var items = new List<ClusterViewModel>();
+            for (var i = 0; i < clusters.Length; i++)
+            {
+                var cluster = clusters[i];
+                var context = i < contexts.Length ? contexts[i] : new Context();
+
+                items.Add(new ClusterViewModel(cluster, context));
+            }
+
+            _list = items.ToSelectableQueryable();
+
+            var current = KubernetesClientService.GetCurrentContext();
+            var currentSelected = _list.FirstOrDefault(c => c.Item.Cluster.Name == current);
+            if (currentSelected != null)
+            {
+                currentSelected.Selected = true;
+                _selected = currentSelected.Item;
+                await GetNamespacesForSelected(currentSelected);
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

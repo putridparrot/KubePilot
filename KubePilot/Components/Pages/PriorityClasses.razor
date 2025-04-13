@@ -1,0 +1,59 @@
+@page "/priorityclasses"
+@inject IKubernetesClientService KubernetesClientService;
+
+<ListPage Title="Priority Classes" IsLoading="@_loading" KubectlHint="kubectl get priorityclasses" Selected="@_selected">
+    <FluentDataGrid TGridItem="Selectable<V1PriorityClass>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <EmptyContent>
+            <div>@(_failure ?? "No data to show")</div>
+        </EmptyContent>
+        <ChildContent>
+            <SelectColumn TGridItem="Selectable<V1PriorityClass>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Value" Property="@(p => p.Item.Value)" Sortable="true" />
+            <PropertyColumn Title="Default" Property="@(p => GlobalDefault(p))" Sortable="true" />
+            <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
+        </ChildContent>
+    </FluentDataGrid>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<V1PriorityClass>>? _list;
+    private V1PriorityClass? _selected;
+    private string? _failure;
+
+    private static bool GlobalDefault(Selectable<V1PriorityClass> s) => s.Item.GlobalDefault ?? false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetPriorityClassesAsync();
+            switch (items)
+            {
+                case ISuccess success:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<V1PriorityClass> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+}

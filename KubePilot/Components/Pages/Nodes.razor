@@ -1,0 +1,59 @@
+@page "/nodes"
+@inject IKubernetesClientService KubernetesClientService;
+
+<ListPage Title="Nodes" IsLoading="@_loading" KubectlHint="kubectl get nodes --all-namespaces" Selected="@_selected">
+    <FluentDataGrid TGridItem="Selectable<V1Node>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <EmptyContent>
+            <div>@(_failure ?? "No data to show")</div>
+        </EmptyContent>
+        <ChildContent>
+            <SelectColumn TGridItem="Selectable<V1Node>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Status" Property="@(p => GetStatus(p))" Sortable="true" />
+            <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
+            <PropertyColumn Title="Version" Property="@(p => p.Item.Status.NodeInfo.KubeletVersion)" Sortable="true" />
+        </ChildContent>
+    </FluentDataGrid>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<V1Node>>? _list;
+    private V1Node? _selected;
+    private string? _failure;
+
+    private static string? GetStatus(Selectable<V1Node> item) => item.Item.Status.Conditions.FirstOrDefault(s => s.Type == "Ready")?.Status == "True" ? "Ready" : string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.GetNodesAsync();
+            switch (items)
+            {
+                case ISuccess success:
+                    _list = items.Value.Items.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<V1Node> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+}

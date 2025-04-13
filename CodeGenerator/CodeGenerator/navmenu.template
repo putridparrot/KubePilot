@@ -1,0 +1,23 @@
+@inject IKubernetesClientService KubernetesClientService
+ 
+<div style="height: 100vh; overflow-y: auto; width:400px">
+    <FluentNavMenu Width="400" Collapsible="false" Title="Navigation Menu" Margin="10px">
+        <FluentNavLink Href="/" Match="NavLinkMatch.All" Class="bold-nav-link">Clusters</FluentNavLink>
+
+        @if (_clusters != null)
+        {
+            {{#each this}}
+            <FluentNavLink Href="/{{PageName Title}}" Class="normal-nav-link">{{Title}}</FluentNavLink>
+            {{/each}}
+        }
+    </FluentNavMenu>
+</div>
+
+@code {
+    private List<Cluster>? _clusters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _clusters = await KubernetesClientService.GetClustersAsync();
+    }
+}

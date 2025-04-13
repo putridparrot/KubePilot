@@ -1,0 +1,32 @@
+﻿@using KubePilot.Components.ViewModels
+@implements IDialogContentComponent
+
+<h3>Configuration</h3>
+
+@* <FluentMessageBarProvider Section="Section Header" MaxMessageCount="1" />
+
+<p>Some configuration</p>
+ *@
+
+@if (Dialog != null)
+{
+@*         <FluentStack Orientation="Orientation.Vertical" Style="border: 1px solid red; padding: 10px">
+            <span>This section is visible only when component is hosted inside a Dialog</span>
+            <FluentButton OnClick="@(() => ToggleDialogPrimaryActionButton(true))">Enable Dialog Primary Action</FluentButton>
+            <FluentButton OnClick="@(() => ToggleDialogPrimaryActionButton(false))">Disable Dialog Primary Action</FluentButton>
+        </FluentStack>
+ *@}
+
+@code {
+
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+
+    [Parameter]
+    public ConfigurationViewModel Content { get; set; } = default!;
+
+    private void ToggleDialogPrimaryActionButton(bool enable)
+    {
+        Dialog!.TogglePrimaryActionButton(enable);
+    }
+}

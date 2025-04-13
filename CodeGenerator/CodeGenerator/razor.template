@@ -1,0 +1,111 @@
+@page "/{{PageName Title}}"
+@inject IKubernetesClientService KubernetesClientService;
+{{#if DescribeMethod }} 
+@inject IDialogService DialogService
+@inject IClipboardService ClipboardService
+{{/if}}
+
+<ListPage Title="{{Title}}" IsLoading="@_loading" KubectlHint="{{KubeCtlHint}}" Selected="@_selected">
+    {{#if DescribeMethod }} 
+    <Actions>
+        <FluentButton Id="Describe" OnClick="@DescribeAsync" Disabled="@(_selected is null)">
+            <FluentIcon Icon="Icons.Regular.Size16.Info"></FluentIcon>
+        </FluentButton>
+        <FluentTooltip Anchor="Describe">Describe</FluentTooltip>
+    </Actions>
+    {{/if}}
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<{{ItemType}}>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<{{ItemType}}>"
+                      SelectMode="DataGridSelectMode.Single"
+                      SelectFromEntireRow="true"
+                      Property="@(p => p.Selected)"
+                      OnSelect="@(p => Select(p))" />
+                {{#Fields}}
+                <PropertyColumn Title="{{Title}}" Property="@(p => {{{Expression}}})"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}} IsDefaultSortColumn="true" {{/if}}/>
+                {{/Fields}}
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
+</ListPage>
+
+@code {
+    private bool _loading = true;
+    private IQueryable<Selectable<{{ItemType}}>>? _list;
+    private {{ItemType}}? _selected;
+    private string? _failure;
+
+    {{#ExtraMethods}}
+    {{{this}}}
+    {{/ExtraMethods}}
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var items = await KubernetesClientService.{{ListMethod}}();
+            switch (items)
+            {
+                case ISuccess:
+                    _list = items.Value.{{PropertyName}}.ToSelectableQueryable();
+                    _failure = null;
+                    break;
+                case IFailure failure:
+                    _list = null;
+                    _failure = failure.FailureMessage();
+                    break;
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Select((Selectable<{{ItemType}}> Item, bool Selected) p)
+    {
+        p.Item.Selected = p.Selected;
+        _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+
+    {{#if DescribeMethod }} 
+    private async Task DescribeAsync()
+    {
+        if (_selected is null)
+            return;
+
+        var result = await KubernetesClientService.{{DescribeMethod}};
+        switch (result)
+        {
+            case ISuccess success:
+                var yaml = Converter.ToYaml(result);
+
+                var dialog = await DialogService.ShowDialogAsync<YamlViewerDialog>(yaml, new DialogParameters
+                {
+                    Title = "YAML",
+                    Width = "100vh",
+                    Height = "90vh",
+                    PrimaryAction = "Copy",
+                    SecondaryAction = "Close"
+                });
+
+                var dlgResult = await dialog.Result;
+                if (dlgResult.Data is not null && !dlgResult.Cancelled)
+                {
+                    await ClipboardService.ToClipboardAsync(yaml);
+                }
+
+                _failure = null;
+                break;
+            case IFailure failure:
+                _failure = failure.FailureMessage();
+                break;
+        }
+    }
+    {{/if}}
+}

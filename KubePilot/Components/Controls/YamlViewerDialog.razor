@@ -1,0 +1,43 @@
+﻿@implements IDialogContentComponent
+
+@if (Dialog != null)
+{
+    <div class="parent-container">
+        <FluentTextArea ReadOnly="true" Value="@Content" Class="full-size-textarea"></FluentTextArea>
+    </div>
+}
+
+
+<style>
+    /* Parent container to define the area */
+    .parent-container {
+        display: flex;
+        height: 83%;
+        width: 100%; 
+    }
+
+    .full-size-textarea {
+        flex-grow: 1; /* Take up remaining space in flex container */
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+    }
+
+    fluent-text-area::part(control) {
+        height: 100%;
+    }
+</style>
+
+
+@code {
+
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+
+    [Parameter]
+    public string? Content { get; set; }
+
+    private void ToggleDialogPrimaryActionButton(bool enable)
+    {
+        Dialog!.TogglePrimaryActionButton(enable);
+    }
+}

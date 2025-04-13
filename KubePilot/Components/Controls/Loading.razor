@@ -1,0 +1,17 @@
+﻿@inherits ComponentBase
+
+@if (IsLoading)
+{
+    <div style="display: grid; grid-gap: 12px; grid-auto-flow: column; margin-right: 12px">
+        <FluentProgress></FluentProgress>
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public bool IsLoading { get; set; } = true;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

@@ -2,6 +2,7 @@
 using k8s.Autorest;
 using k8s.KubeConfigModels;
 using k8s.Models;
+using KubePilot.Extensions;
 using PutridParrot.Results;
 
 namespace KubePilot.Services;
@@ -42,32 +43,35 @@ public class KubernetesClientService : IKubernetesClientService
         return Task.FromResult(_k8SConfiguration.Clusters.ToList());
     }
 
-    public async Task<IResult<V1PodList>> GetPodsAsync()
+    public async Task<IResult<V1PodList>> GetPodsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListPodForAllNamespacesAsync(), () => new V1PodList([]));
+        return await GetOrDefault(
+            () => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedPodAsync(nameSpace) : _kubernetes.CoreV1.ListPodForAllNamespacesAsync(), 
+            () => new V1PodList([]));
     }
 
-    public async Task<IResult<V1ConfigMapList>> GetConfigMapsAsync()
+    public async Task<IResult<V1ConfigMapList>> GetConfigMapsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListConfigMapForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedConfigMapAsync(nameSpace) : _kubernetes.CoreV1.ListConfigMapForAllNamespacesAsync(),
             () => new V1ConfigMapList([]));
     }
 
-    public async Task<IResult<V1DaemonSetList>> GetDaemonSetsAsync()
+    public async Task<IResult<V1DaemonSetList>> GetDaemonSetsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.AppsV1.ListDaemonSetForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.AppsV1.ListNamespacedDaemonSetAsync(nameSpace) : _kubernetes.AppsV1.ListDaemonSetForAllNamespacesAsync(),
             () => new V1DaemonSetList([]));
     }
 
-    public async Task<IResult<V1DeploymentList>> GetDeploymentsAsync()
+    public async Task<IResult<V1DeploymentList>> GetDeploymentsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.AppsV1.ListDeploymentForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.AppsV1.ListNamespacedDeploymentAsync(nameSpace) : _kubernetes.AppsV1.ListDeploymentForAllNamespacesAsync(),
             () => new V1DeploymentList([]));
     }
 
-    public async Task<IResult<V1EndpointsList>> GetEndpointsAsync()
+    public async Task<IResult<V1EndpointsList>> GetEndpointsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListEndpointsForAllNamespacesAsync(), () => new V1EndpointsList([]));
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedEndpointsAsync(nameSpace) : _kubernetes.CoreV1.ListEndpointsForAllNamespacesAsync(), 
+            () => new V1EndpointsList([]));
     }
 
     public async Task<IResult<V1NamespaceList>> GetNamespacesAsync()
@@ -80,48 +84,51 @@ public class KubernetesClientService : IKubernetesClientService
         return await GetOrDefault(() => _kubernetes.CoreV1.ListNodeAsync(), () => new V1NodeList([]));
     }
 
-    public async Task<IResult<V1ReplicationControllerList>> GetReplicationControllersAsync()
+    public async Task<IResult<V1ReplicationControllerList>> GetReplicationControllersAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListReplicationControllerForAllNamespacesAsync(), () => new V1ReplicationControllerList([]));
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedReplicationControllerAsync(nameSpace) : _kubernetes.CoreV1.ListReplicationControllerForAllNamespacesAsync(), 
+            () => new V1ReplicationControllerList([]));
     }
 
-    public async Task<IResult<V1ReplicaSetList>> GetReplicaSetsAsync()
+    public async Task<IResult<V1ReplicaSetList>> GetReplicaSetsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.AppsV1.ListReplicaSetForAllNamespacesAsync(), () => new V1ReplicaSetList([]));
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.AppsV1.ListNamespacedReplicaSetAsync(nameSpace) : _kubernetes.AppsV1.ListReplicaSetForAllNamespacesAsync(), 
+            () => new V1ReplicaSetList([]));
     }
 
-    public async Task<IResult<V1ServiceList>> GetServicesAsync()
+    public async Task<IResult<V1ServiceList>> GetServicesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListServiceForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedServiceAsync(nameSpace) : _kubernetes.CoreV1.ListServiceForAllNamespacesAsync(),
             () => new V1ServiceList([]));
     }
 
-    public async Task<IResult<V1StatefulSetList>> GetStatefulSetsAsync()
+    public async Task<IResult<V1StatefulSetList>> GetStatefulSetsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.AppsV1.ListStatefulSetForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.AppsV1.ListNamespacedStatefulSetAsync(nameSpace) : _kubernetes.AppsV1.ListStatefulSetForAllNamespacesAsync(),
             () => new V1StatefulSetList([]));
     }
 
-    public async Task<IResult<V1CronJobList>> GetCronJobsAsync()
+    public async Task<IResult<V1CronJobList>> GetCronJobsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.BatchV1.ListCronJobForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.BatchV1.ListNamespacedCronJobAsync(nameSpace) : _kubernetes.BatchV1.ListCronJobForAllNamespacesAsync(),
             () => new V1CronJobList([]));
     }
 
-    public async Task<IResult<V1JobList>> GetJobsAsync()
+    public async Task<IResult<V1JobList>> GetJobsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.BatchV1.ListJobForAllNamespacesAsync(), () => new V1JobList([]));
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.BatchV1.ListNamespacedJobAsync(nameSpace) : _kubernetes.BatchV1.ListJobForAllNamespacesAsync(), 
+            () => new V1JobList([]));
     }
 
-    public async Task<IResult<V1EndpointSliceList>> GetEndpointSlicesAsync()
+    public async Task<IResult<V1EndpointSliceList>> GetEndpointSlicesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.DiscoveryV1.ListEndpointSliceForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.DiscoveryV1.ListNamespacedEndpointSliceAsync(nameSpace) : _kubernetes.DiscoveryV1.ListEndpointSliceForAllNamespacesAsync(),
             () => new V1EndpointSliceList([]));
     }
 
-    public async Task<IResult<V1SecretList>> GetSecretsAsync()
+    public async Task<IResult<V1SecretList>> GetSecretsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListSecretForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedSecretAsync(nameSpace) : _kubernetes.CoreV1.ListSecretForAllNamespacesAsync(),
             () => new V1SecretList([]));
     }
 
@@ -131,9 +138,9 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1PersistentVolumeList([]));
     }
 
-    public async Task<IResult<V1IngressList>> GetIngressesAsync()
+    public async Task<IResult<V1IngressList>> GetIngressesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.NetworkingV1.ListIngressForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.NetworkingV1.ListNamespacedIngressAsync(nameSpace) : _kubernetes.NetworkingV1.ListIngressForAllNamespacesAsync(),
             () => new V1IngressList([]));
     }
 
@@ -143,9 +150,9 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1IngressClassList([]));
     }
 
-    public async Task<IResult<V1PersistentVolumeClaimList>> GetPersistentVolumeClaimsAsync()
+    public async Task<IResult<V1PersistentVolumeClaimList>> GetPersistentVolumeClaimsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListPersistentVolumeClaimForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedPersistentVolumeClaimAsync(nameSpace) : _kubernetes.CoreV1.ListPersistentVolumeClaimForAllNamespacesAsync(),
             () => new V1PersistentVolumeClaimList([]));
     }
 
@@ -208,14 +215,15 @@ public class KubernetesClientService : IKubernetesClientService
         return await GetOrDefault(() => _kubernetes.NetworkingV1beta1.ListIPAddressAsync(), () => new V1beta1IPAddressList([]));
     }
 
-    public async Task<IResult<V1LeaseList>> GetLeasesAsync()
+    public async Task<IResult<V1LeaseList>> GetLeasesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoordinationV1.ListLeaseForAllNamespacesAsync(), () => new V1LeaseList([]));
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoordinationV1.ListNamespacedLeaseAsync(nameSpace) : _kubernetes.CoordinationV1.ListLeaseForAllNamespacesAsync(), 
+            () => new V1LeaseList([]));
     }
 
-    public async Task<IResult<V1alpha2LeaseCandidateList>> GetLeaseCandidatesAsync()
+    public async Task<IResult<V1alpha2LeaseCandidateList>> GetLeaseCandidatesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoordinationV1alpha2.ListLeaseCandidateForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoordinationV1alpha2.ListNamespacedLeaseCandidateAsync(nameSpace) : _kubernetes.CoordinationV1alpha2.ListLeaseCandidateForAllNamespacesAsync(),
             () => new V1alpha2LeaseCandidateList([]));
     }
 
@@ -225,20 +233,21 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1PriorityLevelConfigurationList([]));
     }
 
-    public async Task<IResult<V1ResourceQuotaList>> GetResourceQuotasAsync()
+    public async Task<IResult<V1ResourceQuotaList>> GetResourceQuotasAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListResourceQuotaForAllNamespacesAsync(), () => new V1ResourceQuotaList([]));
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedResourceQuotaAsync(nameSpace) : _kubernetes.CoreV1.ListResourceQuotaForAllNamespacesAsync(), 
+            () => new V1ResourceQuotaList([]));
     }
 
-    public async Task<IResult<V1RoleList>> GetRolesAsync()
+    public async Task<IResult<V1RoleList>> GetRolesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.RbacAuthorizationV1.ListRoleForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.RbacAuthorizationV1.ListNamespacedRoleAsync(nameSpace) : _kubernetes.RbacAuthorizationV1.ListRoleForAllNamespacesAsync(),
             () => new V1RoleList([]));
     }
 
-    public async Task<IResult<V1RoleBindingList>> GetRoleBindingsAsync()
+    public async Task<IResult<V1RoleBindingList>> GetRoleBindingsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.RbacAuthorizationV1.ListRoleBindingForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.RbacAuthorizationV1.ListNamespacedRoleBindingAsync(nameSpace) : _kubernetes.RbacAuthorizationV1.ListRoleBindingForAllNamespacesAsync(),
             () => new V1RoleBindingList([]));
     }
 
@@ -247,9 +256,9 @@ public class KubernetesClientService : IKubernetesClientService
         return await GetOrDefault(() => _kubernetes.NodeV1.ListRuntimeClassAsync(), () => new V1RuntimeClassList([]));
     }
 
-    public async Task<IResult<V1ServiceAccountList>> GetServiceAccountsAsync()
+    public async Task<IResult<V1ServiceAccountList>> GetServiceAccountsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListServiceAccountForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedServiceAccountAsync(nameSpace) : _kubernetes.CoreV1.ListServiceAccountForAllNamespacesAsync(),
             () => new V1ServiceAccountList([]));
     }
 
@@ -293,9 +302,9 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1alpha1ClusterTrustBundleList([]));
     }
 
-    public async Task<IResult<V1ControllerRevisionList>> GetControllerRevisionsAsync()
+    public async Task<IResult<V1ControllerRevisionList>> GetControllerRevisionsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.AppsV1.ListControllerRevisionForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.AppsV1.ListNamespacedControllerRevisionAsync(nameSpace) : _kubernetes.AppsV1.ListControllerRevisionForAllNamespacesAsync(),
             () => new V1ControllerRevisionList([]));
     }
 
@@ -311,15 +320,15 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1beta1DeviceClassList([]));
     }
 
-    public async Task<IResult<V1LimitRangeList>> GetLimitRangesAsync()
+    public async Task<IResult<V1LimitRangeList>> GetLimitRangesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListLimitRangeForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedLimitRangeAsync(nameSpace) : _kubernetes.CoreV1.ListLimitRangeForAllNamespacesAsync(),
             () => new V1LimitRangeList([]));
     }
 
-    public async Task<IResult<V2HorizontalPodAutoscalerList>> GetHorizontalPodAutoscalersAsync()
+    public async Task<IResult<V2HorizontalPodAutoscalerList>> GetHorizontalPodAutoscalersAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.AutoscalingV2.ListHorizontalPodAutoscalerForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.AutoscalingV2.ListNamespacedHorizontalPodAutoscalerAsync(nameSpace) : _kubernetes.AutoscalingV2.ListHorizontalPodAutoscalerForAllNamespacesAsync(),
             () => new V2HorizontalPodAutoscalerList([]));
     }
 
@@ -329,15 +338,15 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1MutatingWebhookConfigurationList([]));
     }
 
-    public async Task<IResult<V1PodTemplateList>> GetPodTemplatesAsync()
+    public async Task<IResult<V1PodTemplateList>> GetPodTemplatesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.CoreV1.ListPodTemplateForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedPodTemplateAsync(nameSpace) : _kubernetes.CoreV1.ListPodTemplateForAllNamespacesAsync(),
             () => new V1PodTemplateList([]));
     }
 
-    public async Task<IResult<V1PodDisruptionBudgetList>> GetPodDisruptionBudgetsAsync()
+    public async Task<IResult<V1PodDisruptionBudgetList>> GetPodDisruptionBudgetsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.PolicyV1.ListPodDisruptionBudgetForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.PolicyV1.ListNamespacedPodDisruptionBudgetAsync(nameSpace) : _kubernetes.PolicyV1.ListPodDisruptionBudgetForAllNamespacesAsync(),
             () => new V1PodDisruptionBudgetList([]));
     }
 
@@ -347,15 +356,15 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1PriorityClassList([]));
     }
 
-    public async Task<IResult<V1beta1ResourceClaimList>> GetResourceClaimsAsync()
+    public async Task<IResult<V1beta1ResourceClaimList>> GetResourceClaimsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.ResourceV1beta1.ListResourceClaimForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.ResourceV1beta1.ListNamespacedResourceClaimAsync(nameSpace) : _kubernetes.ResourceV1beta1.ListResourceClaimForAllNamespacesAsync(),
             () => new V1beta1ResourceClaimList([]));
     }
 
-    public async Task<IResult<V1beta1ResourceClaimTemplateList>> GetResourceClaimTemplatesAsync()
+    public async Task<IResult<V1beta1ResourceClaimTemplateList>> GetResourceClaimTemplatesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.ResourceV1beta1.ListResourceClaimTemplateForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.ResourceV1beta1.ListNamespacedResourceClaimTemplateAsync(nameSpace) : _kubernetes.ResourceV1beta1.ListResourceClaimTemplateForAllNamespacesAsync(),
             () => new V1beta1ResourceClaimTemplateList([]));
     }
 
@@ -383,9 +392,9 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1ValidatingWebhookConfigurationList([]));
     }
 
-    public async Task<IResult<V1NetworkPolicyList>> GetNetworkPoliciesAsync()
+    public async Task<IResult<V1NetworkPolicyList>> GetNetworkPoliciesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(() => _kubernetes.NetworkingV1.ListNetworkPolicyForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.NetworkingV1.ListNamespacedNetworkPolicyAsync(nameSpace) : _kubernetes.NetworkingV1.ListNetworkPolicyForAllNamespacesAsync(),
             () => new V1NetworkPolicyList([]));
     }
 
@@ -439,10 +448,9 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1APIGroupList());
     }
 
-    public async Task<IResult<Corev1EventList>> GetEventsAsync()
+    public async Task<IResult<Corev1EventList>> GetEventsAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(
-            () => _kubernetes.CoreV1.ListEventForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.CoreV1.ListNamespacedEventAsync(nameSpace) : _kubernetes.CoreV1.ListEventForAllNamespacesAsync(),
             () => new Corev1EventList());
     }
 
@@ -459,10 +467,9 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1CSINodeList());
     }
 
-    public async Task<IResult<V1CSIStorageCapacityList>> GetCsiStorageCapacitiesAsync()
+    public async Task<IResult<V1CSIStorageCapacityList>> GetCsiStorageCapacitiesAsync(string? nameSpace = null)
     {
-        return await GetOrDefault(
-            () => _kubernetes.StorageV1.ListCSIStorageCapacityForAllNamespacesAsync(),
+        return await GetOrDefault(() => nameSpace.HasValue() ? _kubernetes.StorageV1.ListNamespacedCSIStorageCapacityAsync(nameSpace) : _kubernetes.StorageV1.ListCSIStorageCapacityForAllNamespacesAsync(),
             () => new V1CSIStorageCapacityList());
     }
 
@@ -478,6 +485,20 @@ public class KubernetesClientService : IKubernetesClientService
         return await GetOrDefault(
             () => _kubernetes.CoreV1.ReadNodeAsync(nodeName),
             () => new V1Node());
+    }
+
+    // kubectl get deployment my-app -o yaml
+    public async Task<IResult<V1Deployment>> DescribeDeploymentAsync(string deploymentName, string namespaceName = "default")
+    {
+        return await GetOrDefault(
+            () => _kubernetes.AppsV1.ReadNamespacedDeploymentAsync(deploymentName, namespaceName),
+            () => new V1Deployment());
+    }
+
+    public async Task<IResult<V1Ingress>> DescribeIngressAsync(string ingressName, string namespaceName = "default")
+    {
+        return await GetOrDefault(() => _kubernetes.NetworkingV1.ReadNamespacedIngressAsync(ingressName, namespaceName),
+            () => new V1Ingress());
     }
 
 }

@@ -890,7 +890,7 @@ Definitions:
     Description: "List all Cluster Trust Bundles"
     Category: "Metadata"
     ListMethod: "GetClusterTrustBundlesAsync"    
-    ItemType: "V1CSIStorageCapacity"
+    ItemType: "V1alpha1ClusterTrustBundle"
     IsNamespaced: false
     KubeCtlHint: ""
     Fields:

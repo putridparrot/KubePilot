@@ -2,7 +2,7 @@
 using HandlebarsDotNet;
 using YamlDotNet.Serialization;
 
-const string root = @"D:\Development\putridparrot\Pilot\CodeGenerator\CodeGenerator\";
+const string root = @"D:\Development\putridparrot\KubePilot\CodeGenerator\CodeGenerator\";
 
 var deserializer = new DeserializerBuilder()
     .Build();
@@ -20,7 +20,7 @@ if (operations.Definitions is null)
 
 var pageTemplate = Handlebars.Compile(File.ReadAllText(Path.Combine(root, "razor.template")));
 
-var outputFolder = $"{root}\\.Generated";
+var outputFolder = Path.Combine(root, ".Generated");
 
 if (Directory.Exists(outputFolder))
 {

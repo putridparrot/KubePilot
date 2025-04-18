@@ -6,7 +6,7 @@
     <ListPage Title="Clusters" IsLoading="@_loading" Selected="@_selected" IsCluster="true">
         <Actions>
             <FluentButton Id="UseCluster" OnClick="@UseClusterAsync" Disabled="@(_selected is null)">
-                <FluentIcon Icon="Icons.Regular.Size16.SelectAllOn"></FluentIcon>
+                <FluentIcon Icon="Icons.Filled.Size16.SelectAllOn"></FluentIcon>
             </FluentButton>
             <FluentTooltip Anchor="UseCluster">Use selected Cluster</FluentTooltip>
        </Actions>
@@ -79,6 +79,7 @@
                 }
 
                 selectable.Item.Namespaces = ns.OrderBy(s => s).ToList();
+                selectable.Item.Namespaces.Insert(0, string.Empty); // insert all "no namespace" option equiv to all namespaces
             }
             else
             {

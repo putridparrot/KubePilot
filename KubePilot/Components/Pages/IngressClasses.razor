@@ -45,8 +45,7 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = $"kubectl get ingressclasses {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
-
+            _kubeCtlHint = "kubectl get ingressclasses";
         }
         finally
         {

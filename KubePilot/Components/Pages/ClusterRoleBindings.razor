@@ -49,8 +49,7 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = $"kubectl get clusterrolebindings {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
-
+            _kubeCtlHint = "kubectl get clusterrolebindings";
         }
         finally
         {

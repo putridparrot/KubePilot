@@ -48,8 +48,7 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = $"kubectl get nodes {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
-
+            _kubeCtlHint = "kubectl get nodes";
         }
         finally
         {

@@ -48,8 +48,7 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = $"kubectl api-resources {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
-
+            _kubeCtlHint = "kubectl api-resources";
         }
         finally
         {

@@ -1,23 +1,26 @@
 @page "/controllerrevisions"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Controller Revisions" IsLoading="@_loading" KubectlHint="kubectl get controllerrevisions --all-namespaces" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1ControllerRevision>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1ControllerRevision>"
+<ListPage Title="Controller Revisions" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1ControllerRevision>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1ControllerRevision>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
-            <PropertyColumn Title="Controller" Property="@(p => p.Item.Metadata.OwnerReferences[0].Name)" Sortable="true" />
-            <PropertyColumn Title="Revision" Property="@(p => p.Item.Revision)" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Controller" Property="@(p => p.Item.Metadata.OwnerReferences[0].Name)" Sortable="true" />
+                <PropertyColumn Title="Revision" Property="@(p => p.Item.Revision)" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -25,16 +28,17 @@
     private IQueryable<Selectable<V1ControllerRevision>>? _list;
     private V1ControllerRevision? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var items = await KubernetesClientService.GetControllerRevisionsAsync();
+            var items = await KubernetesClientService.GetControllerRevisionsAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Items.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -43,6 +47,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl get controllerrevisions {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -55,4 +61,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

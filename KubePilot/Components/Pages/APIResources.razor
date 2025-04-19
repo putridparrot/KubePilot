@@ -1,24 +1,27 @@
 @page "/apiresources"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="API Resources" IsLoading="@_loading" KubectlHint="kubectl api-resources" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1APIResource>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1APIResource>"
+<ListPage Title="API Resources" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1APIResource>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1APIResource>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Name)" Sortable="true"  IsDefaultSortColumn="true" />
-            <PropertyColumn Title="Version" Property="@(p => p.Item.Version)" Sortable="true" />
-            <PropertyColumn Title="Namespace" Property="@(p => p.Item.Namespaced)" Sortable="true" />
-            <PropertyColumn Title="Shortnames" Property="@(p => p.Item.ShortNames.CsvJoin())" Sortable="true" />
-            <PropertyColumn Title="Kind" Property="@(p => p.Item.Kind)" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Name)" Sortable="true"  IsDefaultSortColumn="true" />
+                <PropertyColumn Title="Version" Property="@(p => p.Item.Version)" Sortable="true" />
+                <PropertyColumn Title="Namespace" Property="@(p => p.Item.Namespaced)" Sortable="true" />
+                <PropertyColumn Title="Shortnames" Property="@(p => p.Item.ShortNames.CsvJoin())" Sortable="true" />
+                <PropertyColumn Title="Kind" Property="@(p => p.Item.Kind)" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -26,6 +29,7 @@
     private IQueryable<Selectable<V1APIResource>>? _list;
     private V1APIResource? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
@@ -35,7 +39,7 @@
             var items = await KubernetesClientService.GetApiResourcesAsync();
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Resources.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -44,6 +48,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl api-resources {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -56,4 +62,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

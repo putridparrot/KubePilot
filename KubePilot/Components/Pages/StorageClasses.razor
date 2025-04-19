@@ -1,21 +1,24 @@
 @page "/storageclasses"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Storage Classes" IsLoading="@_loading" KubectlHint="kubectl get storageclasses --all-namespaces" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1StorageClass>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1StorageClass>"
+<ListPage Title="Storage Classes" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1StorageClass>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1StorageClass>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
-            <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -23,6 +26,7 @@
     private IQueryable<Selectable<V1StorageClass>>? _list;
     private V1StorageClass? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
@@ -32,7 +36,7 @@
             var items = await KubernetesClientService.GetStorageClassesAsync();
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Items.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -41,6 +45,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl get storageclasses {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -53,4 +59,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

@@ -12,6 +12,7 @@ public interface IKubernetesClientService
     K8SConfiguration GetClustersConfiguration();
 
     void SetNamespace(string? ns = null);
+    string GetCurrentNamespace();
 
     Task<List<Cluster>> GetClustersAsync();
     Task<IResult<V1PodList>> GetPodsAsync(string? nameSpace = null);

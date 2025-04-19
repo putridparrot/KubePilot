@@ -1,23 +1,26 @@
 @page "/leases"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Leases" IsLoading="@_loading" KubectlHint="kubectl get leases --all-namespaces" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1Lease>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1Lease>"
+<ListPage Title="Leases" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1Lease>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1Lease>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
-            <PropertyColumn Title="Holder" Property="@(p => p.Item.Spec.HolderIdentity)" Sortable="true" />
-            <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Holder" Property="@(p => p.Item.Spec.HolderIdentity)" Sortable="true" />
+                <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -25,16 +28,17 @@
     private IQueryable<Selectable<V1Lease>>? _list;
     private V1Lease? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var items = await KubernetesClientService.GetLeasesAsync();
+            var items = await KubernetesClientService.GetLeasesAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Items.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -43,6 +47,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl get leases {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -55,4 +61,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

@@ -1,23 +1,26 @@
 @page "/configmaps"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Config Maps" IsLoading="@_loading" KubectlHint="kubectl get configmaps --all-namespaces" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1ConfigMap>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1ConfigMap>"
+<ListPage Title="Config Maps" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1ConfigMap>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1ConfigMap>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
-            <PropertyColumn Title="Data" Property="@(p => p.Item.Data.Count)" Sortable="true" />
-            <PropertyColumn Title="Creation Timestamp" Property="@(p => p.Item.Metadata.CreationTimestamp)" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Data" Property="@(p => p.Item.Data.Count)" Sortable="true" />
+                <PropertyColumn Title="Creation Timestamp" Property="@(p => p.Item.Metadata.CreationTimestamp)" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -25,16 +28,17 @@
     private IQueryable<Selectable<V1ConfigMap>>? _list;
     private V1ConfigMap? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var items = await KubernetesClientService.GetConfigMapsAsync();
+            var items = await KubernetesClientService.GetConfigMapsAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Items.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -43,6 +47,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl get configmaps {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -55,4 +61,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

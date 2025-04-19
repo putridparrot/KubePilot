@@ -1,25 +1,28 @@
 @page "/deployments"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Deployments" IsLoading="@_loading" KubectlHint="kubectl get deployments --all-namespaces" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1Deployment>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1Deployment>"
+<ListPage Title="Deployments" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1Deployment>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1Deployment>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
-            <PropertyColumn Title="Ready" Property="@(p => $"{p.Item.Status.ReadyReplicas}/{p.Item.Status.AvailableReplicas}")" Sortable="true" />
-            <PropertyColumn Title="Upto date" Property="@(p => p.Item.Status.UpdatedReplicas)" Sortable="true" />
-            <PropertyColumn Title="Available" Property="@(p => p.Item.Status.AvailableReplicas)" Sortable="true" />
-            <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Ready" Property="@(p => $"{p.Item.Status.ReadyReplicas}/{p.Item.Status.AvailableReplicas}")" Sortable="true" />
+                <PropertyColumn Title="Upto date" Property="@(p => p.Item.Status.UpdatedReplicas)" Sortable="true" />
+                <PropertyColumn Title="Available" Property="@(p => p.Item.Status.AvailableReplicas)" Sortable="true" />
+                <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -27,16 +30,17 @@
     private IQueryable<Selectable<V1Deployment>>? _list;
     private V1Deployment? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var items = await KubernetesClientService.GetDeploymentsAsync();
+            var items = await KubernetesClientService.GetDeploymentsAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Items.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -45,6 +49,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl get deployments {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -57,4 +63,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

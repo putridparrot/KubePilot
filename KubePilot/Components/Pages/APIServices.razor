@@ -1,22 +1,25 @@
 @page "/apiservices"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="API Services" IsLoading="@_loading" KubectlHint="kubectl get apiservices" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1APIService>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1APIService>"
+<ListPage Title="API Services" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1APIService>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1APIService>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
-            <PropertyColumn Title="Service" Property="@(p => p.Item.Status.Conditions[0].Reason)" Sortable="true" />
-            <PropertyColumn Title="Available" Property="@(p => p.Item.Status.Conditions[0].Status)" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Service" Property="@(p => p.Item.Status.Conditions[0].Reason)" Sortable="true" />
+                <PropertyColumn Title="Available" Property="@(p => p.Item.Status.Conditions[0].Status)" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -24,6 +27,7 @@
     private IQueryable<Selectable<V1APIService>>? _list;
     private V1APIService? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
 
     protected override async Task OnInitializedAsync()
@@ -33,7 +37,7 @@
             var items = await KubernetesClientService.GetApiServicesAsync();
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Items.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -42,6 +46,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl get apiservices {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -54,4 +60,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

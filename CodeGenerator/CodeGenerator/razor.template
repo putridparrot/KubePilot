@@ -5,7 +5,7 @@
 @inject IClipboardService ClipboardService
 {{/if}}
 
-<ListPage Title="{{Title}}" IsLoading="@_loading" KubectlHint="{{KubeCtlHint}}" Selected="@_selected">
+<ListPage Title="{{Title}}" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
     {{#if DescribeMethod }} 
     <Actions>
         <FluentButton Id="Describe" OnClick="@DescribeAsync" Disabled="@(_selected is null)">
@@ -39,6 +39,7 @@
     private IQueryable<Selectable<{{ItemType}}>>? _list;
     private {{ItemType}}? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
     {{#ExtraMethods}}
     {{{this}}}
@@ -48,7 +49,11 @@
     {
         try
         {
+            {{#if IsNamespaced}}
+            var items = await KubernetesClientService.{{ListMethod}}(KubernetesClientService.GetCurrentNamespace());
+            {{else}}
             var items = await KubernetesClientService.{{ListMethod}}();
+            {{/if}}
             switch (items)
             {
                 case ISuccess:
@@ -60,6 +65,10 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            {{#if KubeCtlHint }} 
+            _kubeCtlHint = $"{{KubeCtlHint}} {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+            {{/if}}
+
         }
         finally
         {
@@ -82,7 +91,7 @@
         var result = await KubernetesClientService.{{DescribeMethod}};
         switch (result)
         {
-            case ISuccess success:
+            case ISuccess:
                 var yaml = Converter.ToYaml(result);
 
                 var dialog = await DialogService.ShowDialogAsync<YamlViewerDialog>(yaml, new DialogParameters

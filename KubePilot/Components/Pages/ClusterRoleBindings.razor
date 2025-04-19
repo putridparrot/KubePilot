@@ -1,23 +1,26 @@
 @page "/clusterrolebindings"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Cluster Role Bindings" IsLoading="@_loading" KubectlHint="kubectl get clusterrolebindings" Selected="@_selected">
-    <FluentDataGrid TGridItem="Selectable<V1ClusterRoleBinding>" Items="@_list" HeaderCellAsButtonWithMenu="false">
-        <EmptyContent>
-            <div>@(_failure ?? "No data to show")</div>
-        </EmptyContent>
-        <ChildContent>
-            <SelectColumn TGridItem="Selectable<V1ClusterRoleBinding>"
+<ListPage Title="Cluster Role Bindings" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+
+    <ChildContent>
+        <FluentDataGrid TGridItem="Selectable<V1ClusterRoleBinding>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+            <EmptyContent>
+                <div>@(_failure ?? "No data to show")</div>
+            </EmptyContent>
+            <ChildContent>
+                <SelectColumn TGridItem="Selectable<V1ClusterRoleBinding>"
                       SelectMode="DataGridSelectMode.Single"
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-            <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
-            <PropertyColumn Title="Role" Property="@(p => $"{p.Item.RoleRef.Kind}/{p.Item.RoleRef.Name}")" Sortable="true" />
-            <PropertyColumn Title="Users" Property="@(p => GetUsers(p))" Sortable="true" />
-            <PropertyColumn Title="Groups" Property="@(p => GetGroups(p))" Sortable="true" />
-        </ChildContent>
-    </FluentDataGrid>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Role" Property="@(p => $"{p.Item.RoleRef.Kind}/{p.Item.RoleRef.Name}")" Sortable="true" />
+                <PropertyColumn Title="Users" Property="@(p => GetUsers(p))" Sortable="true" />
+                <PropertyColumn Title="Groups" Property="@(p => GetGroups(p))" Sortable="true" />
+            </ChildContent>
+        </FluentDataGrid>
+    </ChildContent>
 </ListPage>
 
 @code {
@@ -25,6 +28,7 @@
     private IQueryable<Selectable<V1ClusterRoleBinding>>? _list;
     private V1ClusterRoleBinding? _selected;
     private string? _failure;
+    private string _kubeCtlHint = string.Empty;
 
     private static string? GetGroups(Selectable<V1ClusterRoleBinding> item) => item.Item.Subjects?.Where(s => s.Kind == "Group").Select(g => g.Name).CsvJoin();
     private static string? GetUsers(Selectable<V1ClusterRoleBinding> item) => item.Item.Subjects?.Where(s => s.Kind == "User").Select(g => g.Name).CsvJoin();
@@ -36,7 +40,7 @@
             var items = await KubernetesClientService.GetClusterRoleBindingsAsync();
             switch (items)
             {
-                case ISuccess success:
+                case ISuccess:
                     _list = items.Value.Items.ToSelectableQueryable();
                     _failure = null;
                     break;
@@ -45,6 +49,8 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _kubeCtlHint = $"kubectl get clusterrolebindings {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+
         }
         finally
         {
@@ -57,4 +63,5 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 }

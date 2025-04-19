@@ -98,7 +98,7 @@ Definitions:
     ListMethod: "GetConfigMapsAsync"    
     ItemType: "V1ConfigMap"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get configmaps --all-namespaces"
+    KubeCtlHint: "kubectl get configmaps"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -114,7 +114,7 @@ Definitions:
     ListMethod: "GetControllerRevisionsAsync"    
     ItemType: "V1ControllerRevision"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get controllerrevisions --all-namespaces"
+    KubeCtlHint: "kubectl get controllerrevisions"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -130,7 +130,7 @@ Definitions:
     ListMethod: "GetCronJobsAsync"    
     ItemType: "V1CronJob"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get cronjobs --all-namespaces"
+    KubeCtlHint: "kubectl get cronjobs"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -154,7 +154,7 @@ Definitions:
     ListMethod: "GetDaemonSetsAsync"    
     ItemType: "V1DaemonSet"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get ds --all-namespaces"
+    KubeCtlHint: "kubectl get ds"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -176,7 +176,7 @@ Definitions:
     ListMethod: "GetDeploymentsAsync"    
     ItemType: "V1Deployment"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get deployments --all-namespaces"
+    KubeCtlHint: "kubectl get deployments"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -195,7 +195,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetDeviceClassesAsync"    
     ItemType: "V1beta1DeviceClass"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -208,7 +208,7 @@ Definitions:
     ListMethod: "GetEndpointsAsync"    
     ItemType: "V1Endpoints"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get endpoints --all-namespaces"
+    KubeCtlHint: "kubectl get endpoints"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -226,7 +226,7 @@ Definitions:
     ListMethod: "GetEndpointSlicesAsync"    
     ItemType: "V1EndpointSlice"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get endpointslices --all-namespaces"
+    KubeCtlHint: "kubectl get endpointslices"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -264,7 +264,7 @@ Definitions:
     ListMethod: "GetHorizontalPodAutoscalersAsync"    
     ItemType: "V2HorizontalPodAutoscaler"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get hpa --all-namespaces"
+    KubeCtlHint: "kubectl get hpa"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -276,7 +276,7 @@ Definitions:
     ListMethod: "GetIngressesAsync"    
     ItemType: "V1Ingress"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get ingresses --all-namespaces"
+    KubeCtlHint: "kubectl get ingresses"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -312,7 +312,7 @@ Definitions:
     ListMethod: "GetJobsAsync"    
     ItemType: "V1Job"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get jobs --all-namespaces"
+    KubeCtlHint: "kubectl get jobs"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -336,7 +336,7 @@ Definitions:
     ListMethod: "GetLeasesAsync"    
     ItemType: "V1Lease"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get leases --all-namespaces"
+    KubeCtlHint: "kubectl get leases"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -352,7 +352,7 @@ Definitions:
     ListMethod: "GetLimitRangesAsync"    
     ItemType: "V1LimitRange"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get limitranges --all-namespaces"
+    KubeCtlHint: "kubectl get limitranges"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -363,7 +363,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetMutatingAdmissionPoliciesAsync"    
     ItemType: "V1alpha1MutatingAdmissionPolicy"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -375,7 +375,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetMutatingAdmissionPolicyBindingsAsync"    
     ItemType: "V1alpha1MutatingAdmissionPolicyBinding"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -387,7 +387,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetMutatingWebhookConfigurationsAsync"    
     ItemType: "V1MutatingWebhookConfiguration"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -400,7 +400,7 @@ Definitions:
     ListMethod: "GetEventsAsync"    
     ItemType: "Corev1Event"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get events --all-namespaces"
+    KubeCtlHint: "kubectl get events"
     Fields:
       - Title: "Type"
         Expression: "p.Item.Type"
@@ -432,7 +432,7 @@ Definitions:
     ListMethod: "GetNetworkPoliciesAsync"    
     ItemType: "V1NetworkPolicy"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get networkpolicies --all-namespaces"
+    KubeCtlHint: "kubectl get networkpolicies"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -443,8 +443,8 @@ Definitions:
     Category: "Core"
     ListMethod: "GetNodesAsync"    
     ItemType: "V1Node"
-    IsNamespaced: true
-    KubeCtlHint: "kubectl get nodes --all-namespaces"
+    IsNamespaced: false
+    KubeCtlHint: "kubectl get nodes"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -461,8 +461,8 @@ Definitions:
     Category: "Core"
     ListMethod: "GetPersistentVolumeClaimsAsync"    
     ItemType: "V1PersistentVolumeClaim"
-    IsNamespaced: true
-    KubeCtlHint: "kubectl get pvc --all-namespaces"
+    IsNamespaced: false
+    KubeCtlHint: "kubectl get pvc"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -473,8 +473,8 @@ Definitions:
     Category: "Core"
     ListMethod: "GetPersistentVolumesAsync"    
     ItemType: "V1PersistentVolume"
-    IsNamespaced: true
-    KubeCtlHint: "kubectl get persistentvolumes --all-namespaces"
+    IsNamespaced: false
+    KubeCtlHint: "kubectl get persistentvolumes"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -499,7 +499,7 @@ Definitions:
     #DescribeMethod: "DescribePodAsync(_selected.Name(), _selected.Namespace())"  -- should we just replace the YAML method
     ItemType: "V1Pod"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get pods --all-namespaces"
+    KubeCtlHint: "kubectl get pods"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -524,7 +524,7 @@ Definitions:
     ListMethod: "GetPodTemplatesAsync"    
     ItemType: "V1PodTemplate"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get podtemplates --all-namespaces"
+    KubeCtlHint: "kubectl get podtemplates"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -568,7 +568,7 @@ Definitions:
     ListMethod: "GetReplicationControllersAsync"    
     ItemType: "V1ReplicationController"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get replicationcontrollers --all-namespaces"
+    KubeCtlHint: "kubectl get replicationcontrollers"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -580,7 +580,7 @@ Definitions:
     ListMethod: "GetReplicaSetsAsync"    
     ItemType: "V1ReplicaSet"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get replicasets --all-namespaces"
+    KubeCtlHint: "kubectl get replicasets"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -635,7 +635,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetResourceSlicesAsync"    
     ItemType: "V1beta1ResourceSlice"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -648,7 +648,7 @@ Definitions:
     ListMethod: "GetRoleBindingsAsync"    
     ItemType: "V1RoleBinding"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get rolebindings --all-namespaces"
+    KubeCtlHint: "kubectl get rolebindings"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -675,7 +675,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetRuntimeClassesAsync"    
     ItemType: "V1RuntimeClass"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Namespace"
@@ -690,7 +690,7 @@ Definitions:
     ListMethod: "GetSecretsAsync"    
     ItemType: "V1Secret"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get secrets --all-namespaces"
+    KubeCtlHint: "kubectl get secrets"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -702,7 +702,7 @@ Definitions:
     ListMethod: "GetServiceAccountsAsync"    
     ItemType: "V1ServiceAccount"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get serviceaccounts --all-namespaces"
+    KubeCtlHint: "kubectl get serviceaccounts"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
@@ -719,7 +719,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetServiceCIDRSAsync"    
     ItemType: "V1beta1ServiceCIDR"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -732,7 +732,7 @@ Definitions:
     ListMethod: "GetServicesAsync"    
     ItemType: "V1Service"
     IsNamespaced: true
-    KubeCtlHint: "kubectl get services --all-namespaces"
+    KubeCtlHint: "kubectl get services"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -759,8 +759,8 @@ Definitions:
     Category: "Core"
     ListMethod: "GetStorageClassesAsync"    
     ItemType: "V1StorageClass"
-    IsNamespaced: true
-    KubeCtlHint: "kubectl get storageclasses --all-namespaces"
+    IsNamespaced: false
+    KubeCtlHint: "kubectl get storageclasses"
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
@@ -771,7 +771,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetStorageVersionMigrationsAsync"    
     ItemType: "V1alpha1StorageVersionMigration"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -783,7 +783,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetStorageVersionsAsync"    
     ItemType: "V1alpha1StorageVersion"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -795,7 +795,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetValidatingAdmissionPoliciesAsync"    
     ItemType: "V1ValidatingAdmissionPolicy"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -807,7 +807,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetValidatingAdmissionPolicyBindingsAsync"    
     ItemType: "V1ValidatingAdmissionPolicyBinding"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -819,7 +819,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetValidatingWebhookConfigurationsAsync"    
     ItemType: "V1ValidatingWebhookConfiguration"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -831,7 +831,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetVolumeAttachmentsAsync"    
     ItemType: "V1VolumeAttachment"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -843,7 +843,7 @@ Definitions:
     Category: "Core"
     ListMethod: "GetVolumeAttributesClassesAsync"    
     ItemType: "V1beta1VolumeAttributesClass"
-    IsNamespaced: true
+    IsNamespaced: false
     KubeCtlHint: ""
     Fields:
       - Title: "Name"
@@ -898,4 +898,40 @@ Definitions:
         Expression: "p.Item.Metadata.Name"
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
-    
+  # - Title: "API Versions"
+  #   Description: "List all API Versions"
+  #   Category: "Metadata"
+  #   ListMethod: "GetAPIVersionsAsync"    
+  #   ItemType: "V1APIGroup"
+  #   IsNamespaced: false
+  #   KubeCtlHint: ""
+  #   Fields:
+  #     - Title: "Name"
+  #       Expression: "p.Item.Metadata.Name"
+  #     - Title: "Creation Timestamp"
+  #       Expression: "p.Item.Metadata.CreationTimestamp"
+  # - Title: "Pod Metrics"
+  #   Description: "List all Pod Metrics"
+  #   Category: "Metadata"
+  #   ListMethod: "GetPodMetricsAsync"    
+  #   ItemType: "k8s.Models.PodMetrics"
+  #   IsNamespaced: false
+  #   KubeCtlHint: ""
+  #   Fields:
+  #     - Title: "Name"
+  #       Expression: "p.Item.Metadata.Name"
+  #     - Title: "Creation Timestamp"
+  #       Expression: "p.Item.Metadata.CreationTimestamp"
+  # - Title: "Node Metrics"
+  #   Description: "List all Node Metrics"
+  #   Category: "Metadata"
+  #   ListMethod: "GetNodeMetricsAsync"    
+  #   ItemType: "k8s.Models.NodeMetrics"
+  #   IsNamespaced: false
+  #   KubeCtlHint: ""
+  #   Fields:
+  #     - Title: "Name"
+  #       Expression: "p.Item.Metadata.Name"
+  #     - Title: "Creation Timestamp"
+  #       Expression: "p.Item.Metadata.CreationTimestamp"
+                                

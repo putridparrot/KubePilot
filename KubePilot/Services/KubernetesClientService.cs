@@ -34,7 +34,7 @@ public class KubernetesClientService : IKubernetesClientService
     }
 
     public string GetCurrentContext() => _kubernetesClientConfiguration.CurrentContext;
-    public string GetCurrentNamespace() => !string.IsNullOrEmpty(_kubernetesClientConfiguration.Namespace) ? _kubernetesClientConfiguration.Namespace : "default" ;
+    public string GetCurrentNamespace() => _kubernetesClientConfiguration.Namespace;
 
     public K8SConfiguration GetClustersConfiguration() => _k8SConfiguration;
 

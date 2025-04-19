@@ -1,13 +1,17 @@
-﻿using CodeGenerator;
+﻿using System.Reflection;
+using System.Reflection.Emit;
+using CodeGenerator;
 using HandlebarsDotNet;
 using YamlDotNet.Serialization;
 
-const string root = @"D:\Development\putridparrot\KubePilot\CodeGenerator\CodeGenerator\";
+var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 var deserializer = new DeserializerBuilder()
     .Build();
 
 Handlebars.RegisterHelper("PageName", (_, arguments) => 
+    arguments[0] is string title ? title.Replace(" ", string.Empty).ToLower() : "<missing>");
+Handlebars.RegisterHelper("NamespaceCommand", (_, arguments) =>
     arguments[0] is string title ? title.Replace(" ", string.Empty).ToLower() : "<missing>");
 
 var operations = deserializer.Deserialize<Application>(File.OpenText(Path.Combine(root, "configuration.yaml")));

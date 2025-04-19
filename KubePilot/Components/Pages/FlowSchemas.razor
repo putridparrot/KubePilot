@@ -28,7 +28,7 @@
     private IQueryable<Selectable<V1FlowSchema>>? _list;
     private V1FlowSchema? _selected;
     private string? _failure;
-    private string _kubeCtlHint = string.Empty;
+    private string _kubeCtlHint = "kubectl get flowschemas";
 
     private static string DistinguisherMethod(Selectable<V1FlowSchema> s) => s.Item.Spec.DistinguisherMethod?.Type ?? string.Empty;
 
@@ -48,7 +48,6 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = "kubectl get flowschemas";
         }
         finally
         {

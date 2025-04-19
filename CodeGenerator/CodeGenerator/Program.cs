@@ -11,8 +11,6 @@ var deserializer = new DeserializerBuilder()
 
 Handlebars.RegisterHelper("PageName", (_, arguments) => 
     arguments[0] is string title ? title.Replace(" ", string.Empty).ToLower() : "<missing>");
-Handlebars.RegisterHelper("NamespaceCommand", (_, arguments) =>
-    arguments[0] is string title ? title.Replace(" ", string.Empty).ToLower() : "<missing>");
 
 var operations = deserializer.Deserialize<Application>(File.OpenText(Path.Combine(root, "configuration.yaml")));
 

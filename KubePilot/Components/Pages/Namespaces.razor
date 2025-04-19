@@ -27,7 +27,7 @@
     private IQueryable<Selectable<V1Namespace>>? _list;
     private V1Namespace? _selected;
     private string? _failure;
-    private string _kubeCtlHint = string.Empty;
+    private string _kubeCtlHint = "kubectl get namespaces";
 
 
     protected override async Task OnInitializedAsync()
@@ -46,7 +46,6 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = "kubectl get namespaces";
         }
         finally
         {

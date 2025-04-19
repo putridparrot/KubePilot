@@ -29,7 +29,7 @@
     private IQueryable<Selectable<V1APIResource>>? _list;
     private V1APIResource? _selected;
     private string? _failure;
-    private string _kubeCtlHint = string.Empty;
+    private string _kubeCtlHint = "kubectl api-resources";
 
 
     protected override async Task OnInitializedAsync()
@@ -48,7 +48,6 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = "kubectl api-resources";
         }
         finally
         {

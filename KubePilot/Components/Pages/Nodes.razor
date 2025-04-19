@@ -28,7 +28,7 @@
     private IQueryable<Selectable<V1Node>>? _list;
     private V1Node? _selected;
     private string? _failure;
-    private string _kubeCtlHint = string.Empty;
+    private string _kubeCtlHint = "kubectl get nodes";
 
     private static string? GetStatus(Selectable<V1Node> item) => item.Item.Status.Conditions.FirstOrDefault(s => s.Type == "Ready")?.Status == "True" ? "Ready" : string.Empty;
 
@@ -48,7 +48,6 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = "kubectl get nodes";
         }
         finally
         {

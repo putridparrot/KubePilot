@@ -26,7 +26,7 @@
     private IQueryable<Selectable<V1PersistentVolume>>? _list;
     private V1PersistentVolume? _selected;
     private string? _failure;
-    private string _kubeCtlHint = string.Empty;
+    private string _kubeCtlHint = "kubectl get persistentvolumes";
 
 
     protected override async Task OnInitializedAsync()
@@ -45,7 +45,6 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = "kubectl get persistentvolumes";
         }
         finally
         {

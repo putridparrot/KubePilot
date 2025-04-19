@@ -39,7 +39,15 @@
     private IQueryable<Selectable<{{ItemType}}>>? _list;
     private {{ItemType}}? _selected;
     private string? _failure;
+    {{#if KubeCtlHint}}
+    {{#if IsNamespaced}} 
     private string _kubeCtlHint = string.Empty;
+    {{else}}
+    private string _kubeCtlHint = "{{KubeCtlHint}}";
+    {{/if}}
+    {{else}}
+    private string _kubeCtlHint = string.Empty;
+    {{/if}}
 
     {{#ExtraMethods}}
     {{{this}}}
@@ -68,8 +76,6 @@
             {{#if KubeCtlHint}}
             {{#if IsNamespaced}} 
             _kubeCtlHint = $"{{KubeCtlHint}} {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
-            {{else}}
-            _kubeCtlHint = "{{KubeCtlHint}}";
             {{/if}}
             {{/if}}
         }

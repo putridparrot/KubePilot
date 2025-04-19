@@ -28,7 +28,7 @@
     private IQueryable<Selectable<V1PriorityClass>>? _list;
     private V1PriorityClass? _selected;
     private string? _failure;
-    private string _kubeCtlHint = string.Empty;
+    private string _kubeCtlHint = "kubectl get priorityclasses";
 
     private static bool GlobalDefault(Selectable<V1PriorityClass> s) => s.Item.GlobalDefault ?? false;
 
@@ -48,7 +48,6 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = "kubectl get priorityclasses";
         }
         finally
         {

@@ -1,7 +1,7 @@
 @page "/pods"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Pods" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Pods" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1Pod>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -23,7 +23,7 @@
             </ChildContent>
         </FluentDataGrid>
     </ChildContent>
-</ListPage>
+</ListComponent>
 
 @code {
     private bool _loading = true;
@@ -36,6 +36,11 @@
     private static string? GetLastRestart(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.State.Running.StartedAt.ToAge() ?? string.Empty;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    protected async Task LoadAsync()
     {
         try
         {

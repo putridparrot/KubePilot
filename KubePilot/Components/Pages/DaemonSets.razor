@@ -1,7 +1,7 @@
 @page "/daemonsets"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Daemon Sets" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Daemon Sets" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1DaemonSet>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -24,7 +24,7 @@
             </ChildContent>
         </FluentDataGrid>
     </ChildContent>
-</ListPage>
+</ListComponent>
 
 @code {
     private bool _loading = true;
@@ -35,6 +35,11 @@
 
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    protected async Task LoadAsync()
     {
         try
         {

@@ -5,7 +5,7 @@
 @inject IClipboardService ClipboardService
 {{/if}}
 
-<ListPage Title="{{Title}}" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="{{Title}}" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
     {{#if DescribeMethod }} 
     <Actions>
         <FluentButton Id="Describe" OnClick="@DescribeAsync" Disabled="@(_selected is null)">
@@ -32,7 +32,7 @@
             </ChildContent>
         </FluentDataGrid>
     </ChildContent>
-</ListPage>
+</ListComponent>
 
 @code {
     private bool _loading = true;
@@ -54,6 +54,11 @@
     {{/ExtraMethods}}
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    protected async Task LoadAsync()
     {
         try
         {

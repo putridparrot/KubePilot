@@ -1,7 +1,7 @@
 @page "/componentstatuses"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Component Statuses" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Component Statuses" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1ComponentStatus>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -21,17 +21,22 @@
             </ChildContent>
         </FluentDataGrid>
     </ChildContent>
-</ListPage>
+</ListComponent>
 
 @code {
     private bool _loading = true;
     private IQueryable<Selectable<V1ComponentStatus>>? _list;
     private V1ComponentStatus? _selected;
     private string? _failure;
-    private string _kubeCtlHint = "kubectl get componentstatuses";
+    private readonly string _kubeCtlHint = "kubectl get componentstatuses";
 
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    protected async Task LoadAsync()
     {
         try
         {

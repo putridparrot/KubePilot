@@ -1,7 +1,7 @@
 @page "/endpoints"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Endpoints" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Endpoints" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1Endpoints>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -21,7 +21,7 @@
             </ChildContent>
         </FluentDataGrid>
     </ChildContent>
-</ListPage>
+</ListComponent>
 
 @code {
     private bool _loading = true;
@@ -33,6 +33,11 @@
     private static string? GetEndpointIps(Selectable<V1Endpoints> item) => item.Item.Subsets is null ? string.Empty : item.Item.Subsets.SelectMany(s => s.Addresses.Select(a => a.Ip)).CsvJoin();
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    protected async Task LoadAsync()
     {
         try
         {

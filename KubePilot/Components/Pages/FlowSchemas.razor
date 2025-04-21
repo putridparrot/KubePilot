@@ -1,7 +1,7 @@
 @page "/flowschemas"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListPage Title="Flow Schemas" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Flow Schemas" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1FlowSchema>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -21,18 +21,23 @@
             </ChildContent>
         </FluentDataGrid>
     </ChildContent>
-</ListPage>
+</ListComponent>
 
 @code {
     private bool _loading = true;
     private IQueryable<Selectable<V1FlowSchema>>? _list;
     private V1FlowSchema? _selected;
     private string? _failure;
-    private string _kubeCtlHint = "kubectl get flowschemas";
+    private readonly string _kubeCtlHint = "kubectl get flowschemas";
 
     private static string DistinguisherMethod(Selectable<V1FlowSchema> s) => s.Item.Spec.DistinguisherMethod?.Type ?? string.Empty;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    protected async Task LoadAsync()
     {
         try
         {

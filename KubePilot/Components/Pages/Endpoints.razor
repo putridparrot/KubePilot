@@ -1,7 +1,7 @@
 @page "/endpoints"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListComponent Title="Endpoints" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Endpoints" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1Endpoints>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -24,7 +24,7 @@
 </ListComponent>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<V1Endpoints>>? _list;
     private V1Endpoints? _selected;
     private string? _failure;
@@ -41,6 +41,7 @@
     {
         try
         {
+            _loading = true;
             var items = await KubernetesClientService.GetEndpointsAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {

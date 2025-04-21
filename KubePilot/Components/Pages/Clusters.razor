@@ -3,21 +3,21 @@
 
 @if (!_isUpdatingNamespaces)
 {
-    <ListComponent Title="Clusters" IsLoading="@_loading" Selected="@_selected" IsCluster="true">
+    <ListComponent Title="Clusters" IsLoading="@_loading" Selected="@_selected" IsCluster="true" OnRefresh="async () => await LoadAsync()">
         <Actions>
             <FluentButton Id="UseCluster" OnClick="@UseClusterAsync" Disabled="@(_selected is null)">
                 <FluentIcon Icon="Icons.Filled.Size16.SelectAllOn"></FluentIcon>
             </FluentButton>
             <FluentTooltip Anchor="UseCluster">Use selected Cluster</FluentTooltip>
-       </Actions>
+        </Actions>
 
         <ChildContent>
-             <FluentDataGrid TGridItem="Selectable<ClusterViewModel>" Items="@_list" RowClass="@RowClass">
+            <FluentDataGrid TGridItem="Selectable<ClusterViewModel>" Items="@_list" RowClass="@RowClass">
                 <SelectColumn TGridItem="Selectable<ClusterViewModel>"
-                              SelectMode="DataGridSelectMode.SingleSticky"
-                              SelectFromEntireRow="true"
-                              Property="@(p => p.Selected)"
-                              OnSelect="@(async p =>
+                SelectMode="DataGridSelectMode.SingleSticky"
+                SelectFromEntireRow="true"
+                Property="@(p => p.Selected)"
+                OnSelect="@(async p =>
                                         {
                                             p.Item.Selected = p.Selected;
                                             _selected = p.Item.Selected ? p.Item.Item : null;
@@ -53,7 +53,7 @@
 </style>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<ClusterViewModel>>? _list;
     private ClusterViewModel? _selected;
     private bool _isUpdatingNamespaces = false;
@@ -114,15 +114,21 @@
             }
             catch (Exception e)
             {
-                                
+
             }
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
         try
         {
+            _loading = true;
             var configuration = KubernetesClientService.GetClustersConfiguration();
             var clusters = configuration.Clusters.ToArray();
             var contexts = configuration.Contexts.ToArray();

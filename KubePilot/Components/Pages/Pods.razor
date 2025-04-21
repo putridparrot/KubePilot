@@ -1,7 +1,7 @@
 @page "/pods"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListComponent Title="Pods" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Pods" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1Pod>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -26,7 +26,7 @@
 </ListComponent>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<V1Pod>>? _list;
     private V1Pod? _selected;
     private string? _failure;
@@ -44,6 +44,7 @@
     {
         try
         {
+            _loading = true;
             var items = await KubernetesClientService.GetPodsAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {

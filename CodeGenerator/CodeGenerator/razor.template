@@ -5,7 +5,7 @@
 @inject IClipboardService ClipboardService
 {{/if}}
 
-<ListComponent Title="{{Title}}" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="{{Title}}" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
     {{#if DescribeMethod }} 
     <Actions>
         <FluentButton Id="Describe" OnClick="@DescribeAsync" Disabled="@(_selected is null)">
@@ -35,7 +35,7 @@
 </ListComponent>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<{{ItemType}}>>? _list;
     private {{ItemType}}? _selected;
     private string? _failure;
@@ -62,6 +62,7 @@
     {
         try
         {
+            _loading = true;
             {{#if IsNamespaced}}
             var items = await KubernetesClientService.{{ListMethod}}(KubernetesClientService.GetCurrentNamespace());
             {{else}}

@@ -1,7 +1,7 @@
 @page "/apiservices"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListComponent Title="API Services" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="API Services" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1APIService>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -23,7 +23,7 @@
 </ListComponent>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<V1APIService>>? _list;
     private V1APIService? _selected;
     private string? _failure;
@@ -39,6 +39,7 @@
     {
         try
         {
+            _loading = true;
             var items = await KubernetesClientService.GetApiServicesAsync();
             switch (items)
             {

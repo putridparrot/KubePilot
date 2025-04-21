@@ -1,7 +1,7 @@
 @page "/statefulsets"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListComponent Title="Stateful Sets" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Stateful Sets" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1StatefulSet>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -22,7 +22,7 @@
 </ListComponent>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<V1StatefulSet>>? _list;
     private V1StatefulSet? _selected;
     private string? _failure;
@@ -38,6 +38,7 @@
     {
         try
         {
+            _loading = true;
             var items = await KubernetesClientService.GetStatefulSetsAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {

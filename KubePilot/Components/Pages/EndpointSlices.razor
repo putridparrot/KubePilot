@@ -1,7 +1,7 @@
 @page "/endpointslices"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListComponent Title="Endpoint Slices" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Endpoint Slices" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1EndpointSlice>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -26,7 +26,7 @@
 </ListComponent>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<V1EndpointSlice>>? _list;
     private V1EndpointSlice? _selected;
     private string? _failure;
@@ -42,6 +42,7 @@
     {
         try
         {
+            _loading = true;
             var items = await KubernetesClientService.GetEndpointSlicesAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {

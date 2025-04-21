@@ -1,7 +1,7 @@
 @page "/cronjobs"
 @inject IKubernetesClientService KubernetesClientService;
 
-<ListComponent Title="Cron Jobs" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected">
+<ListComponent Title="Cron Jobs" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1CronJob>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -22,7 +22,7 @@
 </ListComponent>
 
 @code {
-    private bool _loading = true;
+    private bool _loading;
     private IQueryable<Selectable<V1CronJob>>? _list;
     private V1CronJob? _selected;
     private string? _failure;
@@ -38,6 +38,7 @@
     {
         try
         {
+            _loading = true;
             var items = await KubernetesClientService.GetCronJobsAsync(KubernetesClientService.GetCurrentNamespace());
             switch (items)
             {

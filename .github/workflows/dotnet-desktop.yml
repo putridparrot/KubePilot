@@ -82,18 +82,13 @@ jobs:
     #  env:
     #    Configuration: ${{ matrix.configuration }}
 
-    - name: Build and Publish the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /p:Platform="x64" /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
-      env:
-        Configuration: ${{ matrix.configuration }}
+    - name: Build and Publish
+      run: dotnet publish -c Release -o publish
 
-    - name: Create Zip Archive
+    - name: Create ZIP Archive
       run: |
-        $zipFileName = "KubePilot.zip"
-        $sourceDirectory = "bin\Release\net8.0-windows-x64\publish"
-        $destinationDirectory = "bin\Release\net8.0-windows-x64\publish\KubePilot.zip"
-        Add-Type -AssemblyName System.IO.Compression.FileSystem
-        [IO.Compression.ZipFile]::CreateFromDirectory($sourceDirectory, $destinationDirectory)
+        cd publish
+        zip -r KubePilot.zip .
 
     - name: Upload Release Asset
       uses: softprops/action-gh-release@v1

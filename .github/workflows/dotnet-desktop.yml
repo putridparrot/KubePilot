@@ -86,7 +86,7 @@ jobs:
     #    Configuration: ${{ matrix.configuration }}
 
     - name: Build and Publish
-      run: dotnet publish -c Release -o publish
+      run: dotnet publish -c Release -o publish -f net9.0-windows10.0.19041.0
 
     - name: Create ZIP Archive
       run: |

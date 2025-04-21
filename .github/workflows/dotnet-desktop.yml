@@ -77,10 +77,28 @@ jobs:
     #  run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+    #- name: Restore the application
+    #  run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+    #  env:
+    #    Configuration: ${{ matrix.configuration }}
+
+    - name: Build and Publish the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /p:Platform="x64" /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
       env:
         Configuration: ${{ matrix.configuration }}
+
+    - name: Create Zip Archive
+      run: |
+        $zipFileName = "KubePilot.zip"
+        $sourceDirectory = "bin\Release\net8.0-windows-x64\publish"
+        $destinationDirectory = "bin\Release\net8.0-windows-x64\publish\KubePilot.zip"
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [IO.Compression.ZipFile]::CreateFromDirectory($sourceDirectory, $destinationDirectory)
+
+    - name: Upload Release Asset
+      uses: softprops/action-gh-release@v1
+      with:
+        files: publish/KubePilot.zip
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     #- name: Decode the pfx

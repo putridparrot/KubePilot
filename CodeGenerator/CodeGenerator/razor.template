@@ -43,7 +43,7 @@
     {{#if IsNamespaced}} 
     private string _kubeCtlHint = string.Empty;
     {{else}}
-    private string _kubeCtlHint = "{{KubeCtlHint}}";
+    private readonly string _kubeCtlHint = "{{KubeCtlHint}}";
     {{/if}}
     {{else}}
     private string _kubeCtlHint = string.Empty;

@@ -27,7 +27,7 @@ public static class MauiProgram
         {
             var client = new KubernetesClientService();
             client.LoadKubeConfig();
-            client.LoadConfig();
+            client.LoadConfig(null, null);
             return client;
         });
 

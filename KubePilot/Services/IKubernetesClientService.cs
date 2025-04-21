@@ -7,7 +7,8 @@ namespace KubePilot.Services;
 public interface IKubernetesClientService
 {
     void LoadKubeConfig(string? configLocation = null);
-    void LoadConfig(string? configLocation = null, string? context = null, string? ns = null);
+    void LoadConfig(string? configLocation, string? context);
+    void LoadConfig(string? configLocation, string? context, string? ns);
     string GetCurrentContext();
     K8SConfiguration GetClustersConfiguration();
 

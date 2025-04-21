@@ -20,7 +20,13 @@ public class KubernetesClientService : IKubernetesClientService
         _k8SConfiguration = KubernetesClientConfiguration.LoadKubeConfig(configLocation);
     }
 
-    public void LoadConfig(string? configLocation = null, string? context = null, string? ns = null)
+    public void LoadConfig(string? configLocation, string? context)
+    {
+        _kubernetesClientConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigFile(configLocation, currentContext: context);
+        _kubernetes = new Kubernetes(_kubernetesClientConfiguration);
+    }
+
+    public void LoadConfig(string? configLocation, string? context, string? ns)
     {
         _kubernetesClientConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigFile(configLocation, currentContext: context);
         _kubernetesClientConfiguration.Namespace = ns;

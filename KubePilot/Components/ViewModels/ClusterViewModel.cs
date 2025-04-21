@@ -1,5 +1,4 @@
 ﻿using k8s.KubeConfigModels;
-using k8s.Models;
 
 namespace KubePilot.Components.ViewModels;
 

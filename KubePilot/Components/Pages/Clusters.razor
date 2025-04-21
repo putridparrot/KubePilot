@@ -92,7 +92,7 @@
         }
     }
 
-    private async Task UseClusterAsync()
+    private void UseClusterAsync()
     {
         if (_selected != null)
         {
@@ -112,9 +112,9 @@
                     currentSelected.Selected = true;
                 }
             }
-            catch (Exception e)
+            catch
             {
-
+                // ignore for now
             }
         }
     }

@@ -14,10 +14,10 @@
         <FluentTooltip Anchor="Describe">Describe</FluentTooltip>
         {{/if}}
         {{#if IsNamespaced}}
-        <FluentSelect TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
+        <FluentSelect Id="NamespaceSelect" TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
+        <FluentTooltip Anchor="NamespaceSelect">Select Namespace</FluentTooltip>
         {{/if}}
     </Actions>
-
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<{{ItemType}}>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -46,13 +46,13 @@
     {{#if KubeCtlHint}}
     {{#if IsNamespaced}} 
     private string _kubeCtlHint = string.Empty;
-    private string[]? _namespaces;
-    private string? _selectedNamespace;
     {{else}}
     private readonly string _kubeCtlHint = "{{KubeCtlHint}}";
     {{/if}}
     {{else}}
     private string _kubeCtlHint = string.Empty;
+    {{/if}}
+    {{#if IsNamespaced}} 
     private string[]? _namespaces;
     private string? _selectedNamespace;
     {{/if}}

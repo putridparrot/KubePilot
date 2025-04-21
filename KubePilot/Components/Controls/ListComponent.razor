@@ -18,7 +18,7 @@
         <FluentButton Id="CopyButton" OnClick="@(async () => await ClipboardService.ToClipboardAsync(KubectlHint))">
             <FluentIcon Icon="Icons.Regular.Size16.Copy"></FluentIcon>
         </FluentButton>
-        <FluentTooltip Anchor="CopyButton">Copy to Clipboard</FluentTooltip>
+        <FluentTooltip Anchor="CopyButton">Copy kubectl to Clipboard</FluentTooltip>
 
         <span style="text-align: center;">@KubectlHint</span>
 
@@ -58,7 +58,7 @@
 
 @code {
 
-    private bool _descriptionVisible;
+    //private bool _descriptionVisible;
 
     [Parameter] public string? Title { get; set; }
     [Parameter] public string? KubectlHint { get; set; }

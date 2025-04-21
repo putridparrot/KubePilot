@@ -5,7 +5,6 @@
     <Actions>
     </Actions>
 
-
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1alpha1StorageVersionMigration>" Items="@_list" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
@@ -30,8 +29,6 @@
     private V1alpha1StorageVersionMigration? _selected;
     private string? _failure;
     private string _kubeCtlHint = string.Empty;
-    private string[]? _namespaces;
-    private string? _selectedNamespace;
 
 
     protected override async Task OnInitializedAsync()

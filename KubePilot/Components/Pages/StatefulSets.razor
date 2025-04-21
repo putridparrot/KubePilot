@@ -2,6 +2,10 @@
 @inject IKubernetesClientService KubernetesClientService;
 
 <ListComponent Title="Stateful Sets" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
+    <Actions>
+        <FluentSelect TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
+    </Actions>
+
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1StatefulSet>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -27,19 +31,22 @@
     private V1StatefulSet? _selected;
     private string? _failure;
     private string _kubeCtlHint = string.Empty;
+    private string[]? _namespaces;
+    private string? _selectedNamespace;
 
 
     protected override async Task OnInitializedAsync()
     {
+        _selectedNamespace = KubernetesClientService.GetCurrentNamespace();
         await LoadAsync();
     }
 
-    protected async Task LoadAsync()
+    private async Task LoadAsync()
     {
         try
         {
             _loading = true;
-            var items = await KubernetesClientService.GetStatefulSetsAsync(KubernetesClientService.GetCurrentNamespace());
+            var items = await KubernetesClientService.GetStatefulSetsAsync(_selectedNamespace);
             switch (items)
             {
                 case ISuccess:
@@ -51,6 +58,7 @@
                     _failure = failure.FailureMessage();
                     break;
             }
+            _namespaces = await KubernetesClientService.GetNamespaceNamesAsync();
         }
         finally
         {
@@ -62,6 +70,12 @@
     {
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+
+    private async Task OnNamespaceChangedAsync(string? newNamespace)
+    {
+        _selectedNamespace = newNamespace;
+        await LoadAsync();
     }
 
 }

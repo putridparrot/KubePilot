@@ -80,6 +80,16 @@ public class KubernetesClientService : IKubernetesClientService
             () => new V1EndpointsList([]));
     }
 
+    public async Task<string[]> GetNamespaceNamesAsync()
+    {
+        var namespaces = await GetNamespacesAsync();
+        if (namespaces.IsSuccess())
+        {
+            var ns = namespaces.Value.Items.Select(s => s.Metadata.Name).ToArray();
+            return [string.Empty, ..ns];
+        }
+        return [];
+    }
     public async Task<IResult<V1NamespaceList>> GetNamespacesAsync()
     {
         return await GetOrDefault(() => _kubernetes.CoreV1.ListNamespaceAsync(), () => new V1NamespaceList([]));

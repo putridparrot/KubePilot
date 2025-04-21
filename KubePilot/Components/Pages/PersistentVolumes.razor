@@ -2,6 +2,9 @@
 @inject IKubernetesClientService KubernetesClientService;
 
 <ListComponent Title="Persistent Volumes" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
+    <Actions>
+    </Actions>
+
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1PersistentVolume>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -34,7 +37,7 @@
         await LoadAsync();
     }
 
-    protected async Task LoadAsync()
+    private async Task LoadAsync()
     {
         try
         {
@@ -63,5 +66,6 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 
 }

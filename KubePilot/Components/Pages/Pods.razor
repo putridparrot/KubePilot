@@ -2,10 +2,10 @@
 @inject IKubernetesClientService KubernetesClientService;
 
 <ListComponent Title="Pods" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
-
     <Actions>
         <FluentSelect TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
     </Actions>
+
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1Pod>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -47,13 +47,7 @@
         await LoadAsync();
     }
 
-    private async Task OnNamespaceChangedAsync(string? newNamespace)
-    {
-        _selectedNamespace = newNamespace;
-        await LoadAsync();
-    }
-
-    protected async Task LoadAsync()
+    private async Task LoadAsync()
     {
         try
         {
@@ -71,7 +65,6 @@
                     break;
             }
             _kubeCtlHint = $"kubectl get pods {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
-
             _namespaces = await KubernetesClientService.GetNamespaceNamesAsync();
         }
         finally
@@ -84,6 +77,12 @@
     {
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
+    }
+
+    private async Task OnNamespaceChangedAsync(string? newNamespace)
+    {
+        _selectedNamespace = newNamespace;
+        await LoadAsync();
     }
 
 }

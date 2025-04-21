@@ -6,14 +6,18 @@
 {{/if}}
 
 <ListComponent Title="{{Title}}" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
-    {{#if DescribeMethod }} 
     <Actions>
+        {{#if DescribeMethod }} 
         <FluentButton Id="Describe" OnClick="@DescribeAsync" Disabled="@(_selected is null)">
             <FluentIcon Icon="Icons.Regular.Size16.Info"></FluentIcon>
         </FluentButton>
         <FluentTooltip Anchor="Describe">Describe</FluentTooltip>
+        {{/if}}
+        {{#if IsNamespaced}}
+        <FluentSelect TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
+        {{/if}}
     </Actions>
-    {{/if}}
+
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<{{ItemType}}>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -42,11 +46,15 @@
     {{#if KubeCtlHint}}
     {{#if IsNamespaced}} 
     private string _kubeCtlHint = string.Empty;
+    private string[]? _namespaces;
+    private string? _selectedNamespace;
     {{else}}
     private readonly string _kubeCtlHint = "{{KubeCtlHint}}";
     {{/if}}
     {{else}}
     private string _kubeCtlHint = string.Empty;
+    private string[]? _namespaces;
+    private string? _selectedNamespace;
     {{/if}}
 
     {{#ExtraMethods}}
@@ -55,16 +63,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        {{#if IsNamespaced}} 
+        _selectedNamespace = KubernetesClientService.GetCurrentNamespace();
+        {{/if}}
         await LoadAsync();
     }
 
-    protected async Task LoadAsync()
+    private async Task LoadAsync()
     {
         try
         {
             _loading = true;
             {{#if IsNamespaced}}
-            var items = await KubernetesClientService.{{ListMethod}}(KubernetesClientService.GetCurrentNamespace());
+            var items = await KubernetesClientService.{{ListMethod}}(_selectedNamespace);
             {{else}}
             var items = await KubernetesClientService.{{ListMethod}}();
             {{/if}}
@@ -84,6 +95,9 @@
             _kubeCtlHint = $"{{KubeCtlHint}} {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
             {{/if}}
             {{/if}}
+            {{#if IsNamespaced}} 
+            _namespaces = await KubernetesClientService.GetNamespaceNamesAsync();
+            {{/if}}
         }
         finally
         {
@@ -96,6 +110,14 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
+    {{#if IsNamespaced}} 
+    private async Task OnNamespaceChangedAsync(string? newNamespace)
+    {
+        _selectedNamespace = newNamespace;
+        await LoadAsync();
+    }
+    {{/if}}
 
     {{#if DescribeMethod }} 
     private async Task DescribeAsync()

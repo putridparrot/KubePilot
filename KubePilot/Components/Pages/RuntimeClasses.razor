@@ -2,6 +2,9 @@
 @inject IKubernetesClientService KubernetesClientService;
 
 <ListComponent Title="Runtime Classes" IsLoading="@_loading" KubectlHint="@_kubeCtlHint" Selected="@_selected" OnRefresh="async () => await LoadAsync()">
+    <Actions>
+    </Actions>
+
 
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1RuntimeClass>" Items="@_list" HeaderCellAsButtonWithMenu="false">
@@ -28,6 +31,8 @@
     private V1RuntimeClass? _selected;
     private string? _failure;
     private string _kubeCtlHint = string.Empty;
+    private string[]? _namespaces;
+    private string? _selectedNamespace;
 
 
     protected override async Task OnInitializedAsync()
@@ -35,7 +40,7 @@
         await LoadAsync();
     }
 
-    protected async Task LoadAsync()
+    private async Task LoadAsync()
     {
         try
         {
@@ -64,5 +69,6 @@
         p.Item.Selected = p.Selected;
         _selected = p.Item.Selected ? p.Item.Item : null;
     }
+
 
 }

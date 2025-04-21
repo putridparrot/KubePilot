@@ -62,18 +62,18 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Update .NET Workloads
-      run: dotnet workload update
-
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
+    #- name: Update .NET Workloads
+    #  run: dotnet workload update
+  
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
+    #- name: Setup MSBuild.exe
+    #  uses: microsoft/setup-msbuild@v2
 
     # Execute all unit tests in the solution
     #- name: Execute unit tests

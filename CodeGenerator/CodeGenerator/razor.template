@@ -14,8 +14,7 @@
         <FluentTooltip Anchor="Describe">Describe</FluentTooltip>
         {{/if}}
         {{#if IsNamespaced}}
-        <FluentSelect Id="NamespaceSelect" TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
-        <FluentTooltip Anchor="NamespaceSelect">Select Namespace</FluentTooltip>
+        <FluentCombobox Autocomplete="ComboboxAutocomplete.Both" Placeholder="Select Namespace" Height="200px" TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
         {{/if}}
     </Actions>
 

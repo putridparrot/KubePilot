@@ -39,14 +39,14 @@ public class KubernetesClientService : IKubernetesClientService
         _kubernetes = new Kubernetes(_kubernetesClientConfiguration);
     }
 
-    public string GetCurrentContext() => _kubernetesClientConfiguration.CurrentContext ?? string.Empty;
-    public string GetCurrentNamespace() => _kubernetesClientConfiguration.Namespace ?? string.Empty;
+    public string GetCurrentContext() => _kubernetesClientConfiguration?.CurrentContext ?? string.Empty;
+    public string GetCurrentNamespace() => _kubernetesClientConfiguration?.Namespace ?? string.Empty;
 
-    public K8SConfiguration GetClustersConfiguration() => _k8SConfiguration;
+    public K8SConfiguration? GetClustersConfiguration() => _k8SConfiguration;
 
     public Task<List<Cluster>> GetClustersAsync()
     {
-        return Task.FromResult(_k8SConfiguration.Clusters.ToList());
+        return Task.FromResult(_k8SConfiguration?.Clusters.ToList() ?? []);
     }
 
     public async Task<IResult<V1PodList>> GetPodsAsync(string? nameSpace = null)

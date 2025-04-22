@@ -872,8 +872,10 @@ Definitions:
     Fields:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
-      - Title: "Creation Timestamp"
-        Expression: "p.Item.Metadata.CreationTimestamp"
+      # - Title: "Drivers"
+      #   Expression: "p.Item.Spec.Drivers.Count"
+      - Title: "Age"
+        Expression: "p.Item.Metadata.CreationTimestamp.ToAge()"
   - Title: "CSI Storage Capacity"
     Description: "List all CSI Storage Capacity"
     Category: "Storage"

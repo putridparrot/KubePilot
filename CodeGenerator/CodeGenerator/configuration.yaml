@@ -11,6 +11,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Version"
         Expression: "p.Item.Version"
       - Title: "Namespace"
@@ -30,6 +31,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Service"
         Expression: "p.Item.Status.Conditions[0].Reason"
       - Title: "Available"
@@ -45,6 +47,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Cluster Role Bindings"
@@ -58,6 +61,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Role"
         Expression: '$"{p.Item.RoleRef.Kind}/{p.Item.RoleRef.Name}"'
       - Title: "Users"
@@ -78,6 +82,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Component Statuses"
@@ -91,6 +96,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Status"
         Expression: "p.Item.Conditions[0].Status"
       - Title: "Status"
@@ -110,6 +116,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Data"
         Expression: "p.Item.Data.Count"
       - Title: "Creation Timestamp"
@@ -127,6 +134,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Controller"
         Expression: "p.Item.Metadata.OwnerReferences[0].Name"
       - Title: "Revision"
@@ -142,6 +150,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Custom Resource Definitions"
@@ -155,6 +164,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Daemon Sets"
@@ -170,6 +180,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Desired"
         Expression: "p.Item.Status.DesiredNumberScheduled"
       - Title: "Current"
@@ -193,6 +204,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Ready"
         Expression: '$"{p.Item.Status.ReadyReplicas}/{p.Item.Status.AvailableReplicas}"'
       - Title: "Upto date"
@@ -212,6 +224,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Endpoints"
@@ -227,6 +240,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Endpoints"
         Expression: "GetEndpointIps(p)"
       - Title: "Age"
@@ -246,6 +260,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Address Type"
         Expression: "p.Item.AddressType"
       - Title: "Endpoints"
@@ -265,6 +280,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Priority Level"
         Expression: "p.Item.Spec.PriorityLevelConfiguration.Name"
       - Title: "Matching Precedence"
@@ -284,6 +300,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Ingresses"
@@ -297,6 +314,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Ingress Classes"
@@ -310,6 +328,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "IP Addresses"
@@ -323,6 +342,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Jobs"
@@ -336,6 +356,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Lease Candidates"
@@ -349,6 +370,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Leases"
@@ -364,6 +386,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Holder"
         Expression: "p.Item.Spec.HolderIdentity"
       - Title: "Age"
@@ -379,6 +402,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Mutating Admission Policies"
@@ -392,6 +416,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Mutating Admission Policy Bindings"
@@ -405,6 +430,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Mutating Webhook Configurations"
@@ -418,6 +444,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Events"
@@ -433,6 +460,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Message"
         Expression: "p.Item.Message"
       - Title: "Object Name"
@@ -450,6 +478,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Phase"
         Expression: "p.Item.Status.Phase"
       - Title: "Age"
@@ -465,6 +494,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Nodes"
@@ -478,6 +508,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Status"
         Expression: "GetStatus(p)"
       - Title: "Age"
@@ -497,6 +528,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Persistent Volumes"
@@ -510,6 +542,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Pod Disruption Budgets"
@@ -523,6 +556,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Pods"
@@ -539,6 +573,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Status"
         Expression: "p.Item.Status.Phase"
       - Title: "Restarts"
@@ -548,9 +583,9 @@ Definitions:
       - Title: "Age"
         Expression: "p.Item.Metadata.CreationTimestamp.ToAge()"
     ExtraMethods:
-      - "private static string? GetRestarts(Selectable<V1Pod> item) => 
+      - "private static string GetRestarts(Selectable<V1Pod> item) => 
             item.Item.Status.ContainerStatuses.FirstOrDefault()?.RestartCount.ToString() ?? string.Empty;"
-      - "private static string? GetLastRestart(Selectable<V1Pod> item) =>
+      - "private static string GetLastRestart(Selectable<V1Pod> item) =>
             item.Item.Status.ContainerStatuses.FirstOrDefault()?.State.Running.StartedAt.ToAge() ?? string.Empty;"
   - Title: "Pod Templates"
     Description: "List all Pod Templates"
@@ -563,6 +598,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Priority Classes"
@@ -576,6 +612,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Value"
         Expression: "p.Item.Value"
       - Title: "Default"
@@ -595,6 +632,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Type"
         Expression: "p.Item.Spec.Type"
       - Title: "Age"
@@ -610,6 +648,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Replica Sets"
@@ -625,6 +664,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Replicas"
         Expression: "p.Item.Status.Replicas"
       - Title: "Available Replicas"
@@ -644,6 +684,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Resource Claim Templates"
@@ -657,6 +698,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Resource Quotas"
@@ -670,6 +712,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Resource Slices"
@@ -683,6 +726,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Role Bindings"
@@ -698,6 +742,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Role"
         Expression: '$"{p.Item.RoleRef.Kind}/{p.Item.RoleRef.Name}"'
       - Title: "Age"
@@ -713,6 +758,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Runtime Classes"
@@ -728,6 +774,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Secrets"
@@ -741,6 +788,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Service Accounts"
@@ -756,6 +804,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Count"
         Expression: "GetCount(p)"
       - Title: "Creation Timestamp"
@@ -773,6 +822,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Services"
@@ -786,6 +836,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Type"
         Expression: "p.Item.Spec.Type"
       - Title: "Cluster IP"
@@ -803,6 +854,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Storage Classes"
@@ -816,6 +868,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Age"
         Expression: "p.Item.Metadata.CreationTimestamp.ToAge()"
   - Title: "Storage Version Migrations"
@@ -829,6 +882,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Storage Versions"
@@ -842,6 +896,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Validating Admission Policies"
@@ -855,6 +910,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Validating Admission Policy Bindings"
@@ -868,6 +924,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Validating Webhook Configurations"
@@ -881,6 +938,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Volume Attachments"
@@ -894,6 +952,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Volume Attributes"
@@ -907,6 +966,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "CSI Drivers"
@@ -920,6 +980,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "CSI Nodes"
@@ -933,6 +994,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       # - Title: "Drivers"
       #   Expression: "p.Item.Spec.Drivers.Count"
       - Title: "Age"
@@ -948,6 +1010,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   - Title: "Cluster Trust Bundles"
@@ -961,6 +1024,7 @@ Definitions:
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
+        IsFilterable: true
       - Title: "Creation Timestamp"
         Expression: "p.Item.Metadata.CreationTimestamp"
   # - Title: "API Versions"
@@ -974,6 +1038,7 @@ Definitions:
   #     - Title: "Name"
   #       Expression: "p.Item.Metadata.Name"
   #       IsDefaultSortColumn: true
+  #       IsFilterable: true
   #     - Title: "Creation Timestamp"
   #       Expression: "p.Item.Metadata.CreationTimestamp"
   # - Title: "Pod Metrics"
@@ -987,6 +1052,7 @@ Definitions:
   #     - Title: "Name"
   #       Expression: "p.Item.Metadata.Name"
   #       IsDefaultSortColumn: true
+  #       IsFilterable: true
   #     - Title: "Creation Timestamp"
   #       Expression: "p.Item.Metadata.CreationTimestamp"
   # - Title: "Node Metrics"
@@ -1000,6 +1066,7 @@ Definitions:
   #     - Title: "Name"
   #       Expression: "p.Item.Metadata.Name"
   #       IsDefaultSortColumn: true
+  #       IsFilterable: true
   #     - Title: "Creation Timestamp"
   #       Expression: "p.Item.Metadata.CreationTimestamp"
                                 

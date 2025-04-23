@@ -6,7 +6,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1RuntimeClass>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1RuntimeClass>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -17,7 +17,14 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Creation Timestamp" Property="@(p => p.Item.Metadata.CreationTimestamp)" Sortable="true" />
             </ChildContent>
         </FluentDataGrid>
@@ -30,6 +37,11 @@
     private V1RuntimeClass? _selected;
     private string? _failure;
     private string _kubeCtlHint = string.Empty;
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1RuntimeClass>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
 
     protected override async Task OnInitializedAsync()
@@ -68,4 +80,12 @@
     }
 
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

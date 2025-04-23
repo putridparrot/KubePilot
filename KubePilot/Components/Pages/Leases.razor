@@ -7,7 +7,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1Lease>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1Lease>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -18,7 +18,14 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Holder" Property="@(p => p.Item.Spec.HolderIdentity)" Sortable="true" />
                 <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
             </ChildContent>
@@ -34,6 +41,11 @@
     private string _kubeCtlHint = string.Empty;
     private string[]? _namespaces;
     private string? _selectedNamespace;
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1Lease>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
 
     protected override async Task OnInitializedAsync()
@@ -80,4 +92,12 @@
         await LoadAsync();
     }
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

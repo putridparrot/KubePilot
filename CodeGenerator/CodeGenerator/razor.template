@@ -19,7 +19,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<{{ItemType}}>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<{{ItemType}}>" Items="@{{#if (HasFilter Fields)}}FilteredItems{{else}}_list{{/if}}" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -30,7 +30,18 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 {{#Fields}}
+                {{#if IsFilterable}}
+                <PropertyColumn Title="{{Title}}" Property="@(p => {{{Expression}}})"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}}IsDefaultSortColumn="true"{{/if}}
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace({{FilterName Title}})">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value={{FilterName Title}}
+                                          @oninput="{{MethodName Title}}Filter"
+                                          Placeholder="{{Title}}..." />
+                    </ColumnOptions>
+                </PropertyColumn>
+                {{else}}
                 <PropertyColumn Title="{{Title}}" Property="@(p => {{{Expression}}})"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}}IsDefaultSortColumn="true"{{/if}}/>
+                {{/if}}
                 {{/Fields}}
             </ChildContent>
         </FluentDataGrid>
@@ -54,6 +65,21 @@
     {{#if IsNamespaced}} 
     private string[]? _namespaces;
     private string? _selectedNamespace;
+    {{/if}}
+    {{#Fields}}
+    {{#if IsFilterable}}
+    private string {{FilterName Title}} = string.Empty; 
+    {{/if}}
+    {{/Fields}}
+
+    {{#if (HasFilter Fields)}}
+    private IQueryable<Selectable<{{ItemType}}>>? FilteredItems => _list?.Where(p => 
+        {{#Fields}}
+        {{#if IsFilterable}}  
+        {{{Expression}}}.Contains({{FilterName Title}}, StringComparison.CurrentCultureIgnoreCase)
+        {{/if}}
+        {{/Fields}}
+    );
     {{/if}}
 
     {{#ExtraMethods}}
@@ -153,4 +179,16 @@
         }
     }
     {{/if}}
+
+    {{#Fields}}
+    {{#if IsFilterable}}
+    private void {{MethodName Title}}Filter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            {{FilterName Title}} = value;
+        }
+    }
+    {{/if}}
+    {{/Fields}}
 }

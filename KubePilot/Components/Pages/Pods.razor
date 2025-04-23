@@ -7,7 +7,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1Pod>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1Pod>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -18,7 +18,14 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Status" Property="@(p => p.Item.Status.Phase)" Sortable="true" />
                 <PropertyColumn Title="Restarts" Property="@(p => $"{GetRestarts(p)} ({GetLastRestart(p)})")" Sortable="true" />
                 <PropertyColumn Title="Pod IP" Property="@(p => p.Item.Status.PodIP)" Sortable="true" />
@@ -36,9 +43,14 @@
     private string _kubeCtlHint = string.Empty;
     private string[]? _namespaces;
     private string? _selectedNamespace;
+    private string _nameFilter = string.Empty; 
 
-    private static string? GetRestarts(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.RestartCount.ToString() ?? string.Empty;
-    private static string? GetLastRestart(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.State.Running.StartedAt.ToAge() ?? string.Empty;
+    private IQueryable<Selectable<V1Pod>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
+
+    private static string GetRestarts(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.RestartCount.ToString() ?? string.Empty;
+    private static string GetLastRestart(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.State.Running.StartedAt.ToAge() ?? string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -84,4 +96,12 @@
         await LoadAsync();
     }
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

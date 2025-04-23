@@ -6,7 +6,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1PriorityLevelConfiguration>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1PriorityLevelConfiguration>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -16,7 +16,14 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Type" Property="@(p => p.Item.Spec.Type)" Sortable="true" />
                 <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
             </ChildContent>
@@ -30,6 +37,11 @@
     private V1PriorityLevelConfiguration? _selected;
     private string? _failure;
     private readonly string _kubeCtlHint = "kubectl get prioritylevelconfigurations";
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1PriorityLevelConfiguration>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
 
     protected override async Task OnInitializedAsync()
@@ -68,4 +80,12 @@
     }
 
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

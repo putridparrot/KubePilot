@@ -6,7 +6,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1ClusterRoleBinding>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1ClusterRoleBinding>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -16,7 +16,14 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Role" Property="@(p => $"{p.Item.RoleRef.Kind}/{p.Item.RoleRef.Name}")" Sortable="true" />
                 <PropertyColumn Title="Users" Property="@(p => GetUsers(p))" Sortable="true" />
                 <PropertyColumn Title="Groups" Property="@(p => GetGroups(p))" Sortable="true" />
@@ -31,6 +38,11 @@
     private V1ClusterRoleBinding? _selected;
     private string? _failure;
     private readonly string _kubeCtlHint = "kubectl get clusterrolebindings";
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1ClusterRoleBinding>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
     private static string? GetGroups(Selectable<V1ClusterRoleBinding> item) => item.Item.Subjects?.Where(s => s.Kind == "Group").Select(g => g.Name).CsvJoin();
     private static string? GetUsers(Selectable<V1ClusterRoleBinding> item) => item.Item.Subjects?.Where(s => s.Kind == "User").Select(g => g.Name).CsvJoin();
@@ -71,4 +83,12 @@
     }
 
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

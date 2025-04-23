@@ -33,4 +33,5 @@ public class Field
     public string? Expression { get; set; }
     public bool? IsDefaultSortColumn { get; set; } = false;
     public bool? Sortable { get; set; } = true;
+    public bool? IsFilterable { get; set; } = false;
 }

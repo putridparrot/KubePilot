@@ -6,7 +6,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1FlowSchema>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1FlowSchema>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -16,7 +16,14 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Priority Level" Property="@(p => p.Item.Spec.PriorityLevelConfiguration.Name)" Sortable="true" />
                 <PropertyColumn Title="Matching Precedence" Property="@(p => p.Item.Spec.MatchingPrecedence)" Sortable="true" />
                 <PropertyColumn Title="Distinguisher Method" Property="@(p => DistinguisherMethod(p))" Sortable="true" />
@@ -31,6 +38,11 @@
     private V1FlowSchema? _selected;
     private string? _failure;
     private readonly string _kubeCtlHint = "kubectl get flowschemas";
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1FlowSchema>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
     private static string DistinguisherMethod(Selectable<V1FlowSchema> s) => s.Item.Spec.DistinguisherMethod?.Type ?? string.Empty;
 
@@ -70,4 +82,12 @@
     }
 
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

@@ -6,7 +6,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1PriorityClass>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1PriorityClass>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -16,7 +16,14 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Value" Property="@(p => p.Item.Value)" Sortable="true" />
                 <PropertyColumn Title="Default" Property="@(p => GlobalDefault(p))" Sortable="true" />
                 <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
@@ -31,6 +38,11 @@
     private V1PriorityClass? _selected;
     private string? _failure;
     private readonly string _kubeCtlHint = "kubectl get priorityclasses";
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1PriorityClass>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
     private static bool GlobalDefault(Selectable<V1PriorityClass> s) => s.Item.GlobalDefault ?? false;
 
@@ -70,4 +82,12 @@
     }
 
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

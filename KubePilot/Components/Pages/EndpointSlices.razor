@@ -7,7 +7,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1EndpointSlice>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1EndpointSlice>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -18,7 +18,14 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Address Type" Property="@(p => p.Item.AddressType)" Sortable="true" />
                 <PropertyColumn Title="Endpoints" Property="@(p => p.Item.Endpoints.SelectMany(e => e.Addresses).CsvJoin())" Sortable="true" />
                 <PropertyColumn Title="Ports" Property="@(p => p.Item.Ports.Select(i => i.Port).CsvJoin())" Sortable="true" />
@@ -36,6 +43,11 @@
     private string _kubeCtlHint = string.Empty;
     private string[]? _namespaces;
     private string? _selectedNamespace;
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1EndpointSlice>>? FilteredItems => _list?.Where(p => 
+        p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
 
     protected override async Task OnInitializedAsync()
@@ -82,4 +94,12 @@
         await LoadAsync();
     }
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

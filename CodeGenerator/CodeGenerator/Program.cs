@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
 using CodeGenerator;
 using HandlebarsDotNet;
 using YamlDotNet.Serialization;
@@ -10,7 +11,15 @@ var deserializer = new DeserializerBuilder()
     .Build();
 
 Handlebars.RegisterHelper("PageName", (_, arguments) => 
-    arguments[0] is string title ? title.Replace(" ", string.Empty).ToLower() : "<missing>");
+    arguments[0] is string title ? Functions.Normalize(title).ToLower() : "<missing>");
+Handlebars.RegisterHelper("MethodName", (_, arguments) =>
+    arguments[0] is string title ? Functions.Normalize(title) : "<missing>");
+Handlebars.RegisterHelper("VariableName", (_, arguments) =>
+    arguments[0] is string title ? Functions.VariableName(title) : "<missing>");
+Handlebars.RegisterHelper("FilterName", (_, arguments) =>
+    arguments[0] is string title ? $"{Functions.VariableName(title)}Filter" : "<missing>");
+Handlebars.RegisterHelper("HasFilter", (_, arguments) =>
+    arguments[0] is List<Field> fields && Functions.HasFilter(fields));
 
 var operations = deserializer.Deserialize<Application>(File.OpenText(Path.Combine(root, "configuration.yaml")));
 

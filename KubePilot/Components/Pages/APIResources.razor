@@ -6,7 +6,7 @@
     </Actions>
 
     <ChildContent>
-        <FluentDataGrid TGridItem="Selectable<V1APIResource>" Items="@_list" HeaderCellAsButtonWithMenu="false">
+        <FluentDataGrid TGridItem="Selectable<V1APIResource>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
                 <div>@(_failure ?? "No data to show")</div>
             </EmptyContent>
@@ -16,7 +16,14 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Name)" Sortable="true" IsDefaultSortColumn="true"/>
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Name)" Sortable="true" IsDefaultSortColumn="true"
+                    Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace(_nameFilter)">
+                    <ColumnOptions>
+                            <FluentSearch Autofocus=true @bind-Value=_nameFilter
+                                          @oninput="NameFilter"
+                                          Placeholder="Name..." />
+                    </ColumnOptions>
+                </PropertyColumn>
                 <PropertyColumn Title="Version" Property="@(p => p.Item.Version)" Sortable="true" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Namespaced)" Sortable="true" />
                 <PropertyColumn Title="Shortnames" Property="@(p => p.Item.ShortNames.CsvJoin())" Sortable="true" />
@@ -32,6 +39,11 @@
     private V1APIResource? _selected;
     private string? _failure;
     private readonly string _kubeCtlHint = "kubectl api-resources";
+    private string _nameFilter = string.Empty; 
+
+    private IQueryable<Selectable<V1APIResource>>? FilteredItems => _list?.Where(p => 
+        p.Item.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
+    );
 
 
     protected override async Task OnInitializedAsync()
@@ -70,4 +82,12 @@
     }
 
 
+
+    private void NameFilter(ChangeEventArgs args)
+    {
+        if (args.Value is string value)
+        {
+            _nameFilter = value;
+        }
+    }
 }

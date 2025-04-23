@@ -21,7 +21,7 @@
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<{{ItemType}}>" Items="@{{#if (HasFilter Fields)}}FilteredItems{{else}}_list{{/if}}" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
-                <div>@(_failure ?? "No data to show")</div>
+                <div>@(_failure ?? Consts.NoDataToShow)</div>
             </EmptyContent>
             <ChildContent>
                 <SelectColumn TGridItem="Selectable<{{ItemType}}>"

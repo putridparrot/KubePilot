@@ -8,7 +8,7 @@
     <ChildContent>
         <FluentDataGrid TGridItem="Selectable<V1ClusterRole>" Items="@FilteredItems" HeaderCellAsButtonWithMenu="false">
             <EmptyContent>
-                <div>@(_failure ?? "No data to show")</div>
+                <div>@(_failure ?? Consts.NoDataToShow)</div>
             </EmptyContent>
             <ChildContent>
                 <SelectColumn TGridItem="Selectable<V1ClusterRole>"

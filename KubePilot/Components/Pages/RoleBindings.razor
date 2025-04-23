@@ -59,7 +59,7 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = $"kubectl get rolebindings {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+            _kubeCtlHint = $"kubectl get rolebindings {_selectedNamespace.NamespaceParameter()}";
             _namespaces = await KubernetesClientService.GetNamespaceNamesAsync();
         }
         finally

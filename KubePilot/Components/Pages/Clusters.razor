@@ -31,7 +31,7 @@
                 <TemplateColumn Title="Namespace" Sortable="true" Style="overflow: visible">
                     @if (context.Selected)
                     {
-                        <FluentSelect @bind-Value="@context.Item.Context.ContextDetails.Namespace" Items="@context.Item.Namespaces"/>
+                        <FluentCombobox Autocomplete="ComboboxAutocomplete.Both" Height="200px" TOption="string" Items="@context.Item.Namespaces" @bind-Value="@context.Item.Context.ContextDetails.Namespace" />
                     }
                     else
                     {

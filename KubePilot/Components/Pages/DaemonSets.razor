@@ -62,7 +62,7 @@
                     _failure = failure.FailureMessage();
                     break;
             }
-            _kubeCtlHint = $"kubectl get ds {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+            _kubeCtlHint = $"kubectl get ds {_selectedNamespace.NamespaceParameter()}";
             _namespaces = await KubernetesClientService.GetNamespaceNamesAsync();
         }
         finally

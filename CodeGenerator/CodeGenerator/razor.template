@@ -91,7 +91,7 @@
             }
             {{#if KubeCtlHint}}
             {{#if IsNamespaced}} 
-            _kubeCtlHint = $"{{KubeCtlHint}} {KubernetesClientService.GetCurrentNamespace().NamespaceParameter()}";
+            _kubeCtlHint = $"{{KubeCtlHint}} {_selectedNamespace.NamespaceParameter()}";
             {{/if}}
             {{/if}}
             {{#if IsNamespaced}} 

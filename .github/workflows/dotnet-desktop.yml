@@ -97,6 +97,18 @@ jobs:
         name: KubePilot
         path: ./publish
 
+    # - name: Create GitHub Release
+    #   uses: softprops/action-gh-release@v1
+    #   with:
+    #     tag_name: ${{ github.ref_name }}  # Uses the pushed tag
+    #     name: Release ${{ github.ref_name }}
+    #     body: |
+    #       ## Changes
+    #       - Add release notes here
+    #     files: path/to/binaries/*
+    #     draft: false
+    #     prerelease: false
+
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     #- name: Decode the pfx
     #  run: |

@@ -16,7 +16,7 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
                 <PropertyColumn Title="Status" Property="@(p => p.Item.Conditions[0].Status)" Sortable="true" />
                 <PropertyColumn Title="Status" Property="@(p => p.Item.Conditions[0].Message)" Sortable="true" />
                 <PropertyColumn Title="Error" Property="@(p => p.Item.Conditions[0].Error)" Sortable="true" />

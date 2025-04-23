@@ -16,7 +16,7 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Name)" Sortable="true"  IsDefaultSortColumn="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Name)" Sortable="true" IsDefaultSortColumn="true"/>
                 <PropertyColumn Title="Version" Property="@(p => p.Item.Version)" Sortable="true" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Namespaced)" Sortable="true" />
                 <PropertyColumn Title="Shortnames" Property="@(p => p.Item.ShortNames.CsvJoin())" Sortable="true" />

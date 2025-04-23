@@ -18,7 +18,7 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
                 <PropertyColumn Title="Endpoints" Property="@(p => GetEndpointIps(p))" Sortable="true" />
                 <PropertyColumn Title="Age" Property="@(p => p.Item.Metadata.CreationTimestamp.ToAge())" Sortable="true" />
             </ChildContent>

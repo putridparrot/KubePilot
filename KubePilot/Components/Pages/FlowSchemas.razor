@@ -16,7 +16,7 @@
                       SelectFromEntireRow="true"
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
                 <PropertyColumn Title="Priority Level" Property="@(p => p.Item.Spec.PriorityLevelConfiguration.Name)" Sortable="true" />
                 <PropertyColumn Title="Matching Precedence" Property="@(p => p.Item.Spec.MatchingPrecedence)" Sortable="true" />
                 <PropertyColumn Title="Distinguisher Method" Property="@(p => DistinguisherMethod(p))" Sortable="true" />

@@ -18,7 +18,7 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
                 <PropertyColumn Title="Ready" Property="@(p => $"{p.Item.Status.ReadyReplicas}/{p.Item.Status.AvailableReplicas}")" Sortable="true" />
                 <PropertyColumn Title="Upto date" Property="@(p => p.Item.Status.UpdatedReplicas)" Sortable="true" />
                 <PropertyColumn Title="Available" Property="@(p => p.Item.Status.AvailableReplicas)" Sortable="true" />

@@ -18,7 +18,7 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Type" Property="@(p => p.Item.Type)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
                 <PropertyColumn Title="Message" Property="@(p => p.Item.Message)" Sortable="true" />
                 <PropertyColumn Title="Object Name" Property="@(p => p.Item.InvolvedObject.Name)" Sortable="true" />
                 <PropertyColumn Title="Last Timestamp" Property="@(p => p.Item.LastTimestamp)" Sortable="true" />

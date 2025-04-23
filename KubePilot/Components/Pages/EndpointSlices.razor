@@ -18,7 +18,7 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 <PropertyColumn Title="Namespace" Property="@(p => p.Item.Metadata.NamespaceProperty)" Sortable="true" />
-                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Name" Property="@(p => p.Item.Metadata.Name)" Sortable="true" IsDefaultSortColumn="true"/>
                 <PropertyColumn Title="Address Type" Property="@(p => p.Item.AddressType)" Sortable="true" />
                 <PropertyColumn Title="Endpoints" Property="@(p => p.Item.Endpoints.SelectMany(e => e.Addresses).CsvJoin())" Sortable="true" />
                 <PropertyColumn Title="Ports" Property="@(p => p.Item.Ports.Select(i => i.Port).CsvJoin())" Sortable="true" />

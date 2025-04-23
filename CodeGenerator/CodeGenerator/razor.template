@@ -30,7 +30,7 @@
                       Property="@(p => p.Selected)"
                       OnSelect="@(p => Select(p))" />
                 {{#Fields}}
-                <PropertyColumn Title="{{Title}}" Property="@(p => {{{Expression}}})"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}} IsDefaultSortColumn="true" {{/if}}/>
+                <PropertyColumn Title="{{Title}}" Property="@(p => {{{Expression}}})"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}}IsDefaultSortColumn="true"{{/if}}/>
                 {{/Fields}}
             </ChildContent>
         </FluentDataGrid>

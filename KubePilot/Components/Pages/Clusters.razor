@@ -3,7 +3,7 @@
 
 @if (!_isUpdatingNamespaces)
 {
-    <ListComponent Title="Clusters" IsLoading="@_loading" Selected="@_selected" IsCluster="true" OnRefresh="async () => await LoadAsync()">
+    <ListComponent Title="Clusters" IsLoading="@_loading" Selected="@_selected" IsCluster="true" OnRefresh="async () => await ReloadAsync()">
         <Actions>
             <FluentButton Id="UseCluster" OnClick="@UseClusterAsync" Disabled="@(_selected is null)">
                 <FluentIcon Icon="Icons.Filled.Size16.SelectAllOn"></FluentIcon>
@@ -123,6 +123,16 @@
     {
         await LoadAsync();
     }
+
+    private async Task ReloadAsync()
+    {
+        KubernetesClientService.LoadKubeConfig();
+        //KubernetesClientService.LoadConfig(null, null);
+        KubernetesClientService.LoadConfig(null, _selected?.Context.Name, _selected?.Context.ContextDetails.Namespace);
+
+        await LoadAsync();
+    }
+
 
     private async Task LoadAsync()
     {

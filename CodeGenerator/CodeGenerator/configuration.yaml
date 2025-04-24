@@ -14,7 +14,7 @@ Definitions:
         IsFilterable: true
       - Title: "Version"
         Expression: "p.Item.Version"
-      - Title: "Namespace"
+      - Title: "Namespaced"
         Expression: "p.Item.Namespaced"
       - Title: "Shortnames"
         Expression: "p.Item.ShortNames.CsvJoin()"

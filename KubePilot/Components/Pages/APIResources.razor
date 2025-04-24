@@ -25,7 +25,7 @@
                     </ColumnOptions>
                 </PropertyColumn>
                 <PropertyColumn Title="Version" Property="@(p => p.Item.Version)" Sortable="true" />
-                <PropertyColumn Title="Namespace" Property="@(p => p.Item.Namespaced)" Sortable="true" />
+                <PropertyColumn Title="Namespaced" Property="@(p => p.Item.Namespaced)" Sortable="true" />
                 <PropertyColumn Title="Shortnames" Property="@(p => p.Item.ShortNames.CsvJoin())" Sortable="true" />
                 <PropertyColumn Title="Kind" Property="@(p => p.Item.Kind)" Sortable="true" />
             </ChildContent>

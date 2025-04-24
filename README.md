@@ -2,6 +2,8 @@ THIS IS VERY MUCH UNDER DEVELOPMENT AND IS A BIT OF A MESS WHILST I TRY THINGS O
 
 _I'm developing this in a public repository so, until the notice above is removed one can assume this is still very much subject to lots of changes and I'm using this to learn more about Kubernetes, so some areas may need more attention to be of use._
 
+[![KubePilot Build](https://github.com/putridparrot/KubePilot/actions/workflows/dotnet-desktop.yml/badge.svg?branch=main)](https://github.com/putridparrot/KubePilot/actions/workflows/dotnet-desktop.yml)
+
 # KubePilot
 
 A Blazor based Kubernetes UI along the lines of kubectl.

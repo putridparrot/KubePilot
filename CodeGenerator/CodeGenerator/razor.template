@@ -16,6 +16,9 @@
         {{#if IsNamespaced}}
         <FluentCombobox Autocomplete="ComboboxAutocomplete.Both" Placeholder="Select Namespace" Height="200px" TOption="string" Items="@_namespaces" @bind-Value="@_selectedNamespace" SelectedOptionChanged="OnNamespaceChangedAsync" />
         {{/if}}
+        {{#if IsWatchable}}
+        <FluentSwitch Label="Watch" ValueChanged="WatchChangedAsync"  />
+        {{/if}}
     </Actions>
 
     <ChildContent>
@@ -31,7 +34,7 @@
                       OnSelect="@(p => Select(p))" />
                 {{#Fields}}
                 {{#if IsFilterable}}
-                <PropertyColumn Title="{{Title}}" Property="@(p => {{{Expression}}})"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}}IsDefaultSortColumn="true"{{/if}}
+                <PropertyColumn Title="{{Title}}" Property="@(p => {{#if AllowAutoHideNamespace}}string.IsNullOrWhiteSpace(_selectedNamespace) ? {{{Expression}}} : ""){{else}}{{{Expression}}}){{/if}}"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}}IsDefaultSortColumn="true"{{/if}}{{#if AllowAutoHideNamespace}} Width="@(string.IsNullOrWhiteSpace(_selectedNamespace) ? "" : "0px")"{{/if}}
                     Comparer="@ColumnStringComparer.Instance" Filtered="!string.IsNullOrWhiteSpace({{FilterName Title}})">
                     <ColumnOptions>
                             <FluentSearch Autofocus=true @bind-Value={{FilterName Title}}
@@ -40,7 +43,7 @@
                     </ColumnOptions>
                 </PropertyColumn>
                 {{else}}
-                <PropertyColumn Title="{{Title}}" Property="@(p => {{{Expression}}})"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}}IsDefaultSortColumn="true"{{/if}}/>
+                <PropertyColumn Title="{{Title}}" Property="@(p => {{#if AllowAutoHideNamespace}}string.IsNullOrWhiteSpace(_selectedNamespace) ? {{{Expression}}} : ""){{else}}{{{Expression}}}){{/if}}"{{#if Sortable}} Sortable="true" {{/if}}{{#if IsDefaultSortColumn}}IsDefaultSortColumn="true"{{/if}}{{#if AllowAutoHideNamespace}} Width="@(string.IsNullOrWhiteSpace(_selectedNamespace) ? "" : "0px")"{{/if}}/>
                 {{/if}}
                 {{/Fields}}
             </ChildContent>
@@ -71,6 +74,9 @@
     private string {{FilterName Title}} = string.Empty; 
     {{/if}}
     {{/Fields}}
+    {{#if IsWatchable}}
+    private bool _watch;
+    {{/if}}
 
     {{#if (HasFilter Fields)}}
     private IQueryable<Selectable<{{ItemType}}>>? FilteredItems => _list?.Where(p => 
@@ -100,7 +106,7 @@
         {
             _loading = true;
             {{#if IsNamespaced}}
-            var items = await KubernetesClientService.{{ListMethod}}(_selectedNamespace);
+            var items = await KubernetesClientService.{{ListMethod}}(_selectedNamespace{{#if IsWatchable}}, watch: _watch{{/if}});
             {{else}}
             var items = await KubernetesClientService.{{ListMethod}}();
             {{/if}}
@@ -179,9 +185,9 @@
         }
     }
     {{/if}}
-
     {{#Fields}}
     {{#if IsFilterable}}
+
     private void {{MethodName Title}}Filter(ChangeEventArgs args)
     {
         if (args.Value is string value)
@@ -191,4 +197,12 @@
     }
     {{/if}}
     {{/Fields}}
+    {{#if IsWatchable}}
+
+    private async Task WatchChangedAsync(bool state)
+    {
+        _watch = state;
+        await LoadAsync();
+    }
+    {{/if}}
 }

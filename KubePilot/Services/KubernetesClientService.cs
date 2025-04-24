@@ -49,11 +49,37 @@ public class KubernetesClientService : IKubernetesClientService
         return Task.FromResult(_k8SConfiguration?.Clusters.ToList() ?? []);
     }
 
-    public async Task<IResult<V1PodList>> GetPodsAsync(string? nameSpace = null)
+    public async Task<IResult<V1PodList>> GetPodsAsync(string? nameSpace = null, bool? watch = null)
     {
         return await GetOrDefault(_kubernetes, 
-            k => nameSpace.HasValue() ? k.CoreV1.ListNamespacedPodAsync(nameSpace) : k.CoreV1.ListPodForAllNamespacesAsync(), 
+            k => nameSpace.HasValue() ? k.CoreV1.ListNamespacedPodAsync(nameSpace/*, watch: watch*/) : k.CoreV1.ListPodForAllNamespacesAsync(/*watch: watch*/), 
             () => new V1PodList([]));
+    }
+
+    public async Task WatchPodsAsync(V1PodList list, CancellationToken cancellationToken, string? nameSpace = null)
+    {
+        do
+        {
+            try
+            {
+                var lastResourceVersion = list.ResourceVersion();
+                var podList = _kubernetes.CoreV1.ListNamespacedPodWithHttpMessagesAsync(nameSpace, resourceVersion: lastResourceVersion, watch: true, cancellationToken: cancellationToken);
+
+                await foreach (var (type, item) in podList.WatchAsync<V1Pod, V1PodList>(cancellationToken: cancellationToken))
+                {
+                    // use values
+                }
+            }
+            catch (HttpOperationException ex) when (ex.Response.StatusCode == System.Net.HttpStatusCode.Gone)
+            {
+                //Log.Warning(ex, $"Resource version being watched has been garbage collected by Kubernetes. Establishing the connection again.");
+            }
+            catch (Exception ex)
+            {
+                //Log.Warning(ex, $"Exception occured while watching pods. Establishing the connection again.");
+            }
+        }
+        while (!cancellationToken.IsCancellationRequested);
     }
 
     public async Task<IResult<V1ConfigMapList>> GetConfigMapsAsync(string? nameSpace = null)

@@ -113,6 +113,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -131,6 +132,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -177,6 +179,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -201,6 +204,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -237,6 +241,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -257,6 +262,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -383,6 +389,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -563,13 +570,15 @@ Definitions:
     Description: "List all Pods"
     Category: "Core"
     ListMethod: "GetPodsAsync"    
-    #DescribeMethod: "DescribePodAsync(_selected.Name(), _selected.Namespace())"  -- should we just replace the YAML method
+    #DescribeMethod: "DescribePodAsync(_selected.Name(), _selected.Namespace())"  #-- should we just replace the YAML method
     ItemType: "V1Pod"
     IsNamespaced: true
+    #IsWatchable: true
     KubeCtlHint: "kubectl get pods"
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -661,6 +670,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -739,6 +749,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true
@@ -801,6 +812,7 @@ Definitions:
     Fields:
       - Title: "Namespace"
         Expression: "p.Item.Metadata.NamespaceProperty"
+        #AllowAutoHideNamespace: true
       - Title: "Name"
         Expression: "p.Item.Metadata.Name"
         IsDefaultSortColumn: true

@@ -25,6 +25,7 @@ public class Definition
     public string? KubeCtlHint { get; set; }
     public List<Field>? Fields { get; set; }
     public List<string>? ExtraMethods { get; set; }
+    public bool? IsWatchable { get; set; } = false;
 }
 
 public class Field
@@ -34,4 +35,5 @@ public class Field
     public bool? IsDefaultSortColumn { get; set; } = false;
     public bool? Sortable { get; set; } = true;
     public bool? IsFilterable { get; set; } = false;
+    public bool? AllowAutoHideNamespace { get; set; } = false;
 }

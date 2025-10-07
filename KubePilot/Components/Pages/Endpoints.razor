@@ -47,14 +47,14 @@
         p.Item.Metadata.Name.Contains(_nameFilter, StringComparison.CurrentCultureIgnoreCase)
     );
 
-    private static string? GetEndpointIps(Selectable<V1Endpoints> item)
+    private static string GetEndpointIps(Selectable<V1Endpoints> item)
     {
         if (item.Item.Subsets is null)
             return string.Empty;
 
-        var subsets = item.Item.Subsets.Where(s => s is not null && s.Addresses is not null).ToArray();
+        var subsets = item.Item.Subsets.Where(s => s is not null && s.Addresses is not null);
         var addresses = subsets.SelectMany(s => s.Addresses.Select(a => a.Ip)); 
-        return addresses?.CsvJoin() ?? string.Empty;
+        return addresses.CsvJoin() ?? string.Empty;
     }
 
     protected override async Task OnInitializedAsync()

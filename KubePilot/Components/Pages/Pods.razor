@@ -50,7 +50,7 @@
     );
 
     private static string GetRestarts(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.RestartCount.ToString() ?? string.Empty;
-    private static string GetLastRestart(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.State.Running.StartedAt.ToAge() ?? string.Empty;
+    private static string GetLastRestart(Selectable<V1Pod> item) => item.Item.Status.ContainerStatuses.FirstOrDefault()?.State.Running?.StartedAt.ToAge() ?? string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
